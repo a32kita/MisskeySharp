@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MisskeySharp.Entities
 {
-    public class Note
+    public class Note : MisskeyApiRequestParam
     {
         public string Id { get; set; }
         public DateTime CreatedAt { get; set; }

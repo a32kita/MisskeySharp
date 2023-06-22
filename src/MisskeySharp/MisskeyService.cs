@@ -1,6 +1,9 @@
 ﻿using MisskeySharp.Entities;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -69,6 +72,22 @@ namespace MisskeySharp
             return new Uri(uriStr);
         }
 
+        private string _serializeObject<TObject>(TObject obj)
+        {
+            var jsonDoc = JsonSerializer.SerializeToDocument<TObject>(obj, new JsonSerializerOptions()
+            {
+                PropertyNameCaseInsensitive = true,
+            });
+
+            using (var ms = new MemoryStream())
+            using (var jw = new Utf8JsonWriter(ms))
+            {
+                jsonDoc.WriteTo(jw);
+                var buf = ms.ToArray();
+                return Encoding.UTF8.GetString(buf);
+            }
+        }
+
 
         public MisskeyAuthorizeUriInfo GetAuthorizeUri(string appName, string iconUrl, string callbackUri, MisskeyPermissions permissions)
         {
@@ -124,10 +143,10 @@ namespace MisskeySharp
             {
                 if (request != null)
                 {
-                    var requestJson = JsonSerializer.Serialize(request);
+                    var requestJson = this._serializeObject(request);
+                    var requestContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
 
-                    httpRequest.Headers.Add("Content-Type", "application/json");
-                    httpRequest.Content = new StringContent(requestJson);
+                    httpRequest.Content = requestContent;
                 }
 
                 return await this.RawRequestAsync<TResponse>(httpRequest);
@@ -140,10 +159,10 @@ namespace MisskeySharp
             {
                 if (request != null)
                 {
-                    var requestJson = JsonSerializer.Serialize(request);
+                    var requestJson = this._serializeObject(request);
+                    var requestContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
 
-                    httpRequest.Headers.Add("Content-Type", "application/json");
-                    httpRequest.Content = new StringContent(requestJson);
+                    httpRequest.Content = requestContent;
                 }
 
                 return await this.RawRequestAsync<TResponse>(httpRequest);
@@ -162,29 +181,31 @@ namespace MisskeySharp
 
                 //if (true)
                 //{
-                //    using (var sr = new StreamReader(contentStream))
+                //    var debugStream = new MemoryStream();
+                //    contentStream.CopyTo(debugStream, (int)contentStream.Length);
+                //    contentStream.Seek(0, SeekOrigin.Begin);
+                //    using (var sr = new StreamReader(debugStream))
                 //    {
-                //        var responseBody = sr.ReadToEnd();
-                //        Console.WriteLine(responseBody);
+                //        var json = sr.ReadToEnd();
+                //        Console.WriteLine(json);
                 //    }
                 //}
 
-                //var respJsonData = await JsonDocument.ParseAsync(contentStream);
-                //return respJsonData.Deserialize<TResponse>();
-
-                return await JsonSerializer.DeserializeAsync<TResponse>(contentStream, new JsonSerializerOptions()
+                var respJson = await JsonSerializer.DeserializeAsync<TResponse>(contentStream, new JsonSerializerOptions()
                 {
                     PropertyNameCaseInsensitive = true,
                 });
+
+                return respJson;
             }
         }
 
-        public async Task<TApiResponse> Request<TApiRequest, TApiResponse>(string endpoint, TApiRequest requestParam) where TApiRequest : MisskeyApiRequestParam
+        public async Task<TApiResponse> RequestAsync<TApiRequest, TApiResponse>(string endpoint, TApiRequest requestParam) where TApiRequest : MisskeyApiRequestParam
         {
             var path = "/api/" + endpoint;
             requestParam.I = this.AccessToken;
 
-            return await this.RawGetAsync<TApiRequest, TApiResponse>(path, requestParam);
+            return await this.RawPostAsync<TApiRequest, TApiResponse>(path, requestParam);
         }
 
         public void Dispose()
