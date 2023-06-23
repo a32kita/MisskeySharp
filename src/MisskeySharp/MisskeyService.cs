@@ -75,22 +75,6 @@ namespace MisskeySharp
 
         private string _serializeObject<TObject>(TObject obj)
         {
-            //var jsonDoc = JsonSerializer.SerializeToDocument<TObject>(obj, new JsonSerializerOptions()
-            //{
-            //    PropertyNameCaseInsensitive = true,
-            //});
-
-            //using (var ms = new MemoryStream())
-            //using (var jw = new Utf8JsonWriter(ms))
-            //{
-            //    jsonDoc.RootElement.WriteTo(jw);
-            //    jw.Flush();
-
-            //    var buf = ms.ToArray();
-            //    var json = Encoding.UTF8.GetString(buf);
-            //    return Encoding.UTF8.GetString(buf);
-            //}
-
             return JsonSerializer.Serialize<TObject>(obj, new JsonSerializerOptions()
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
