@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -74,18 +75,26 @@ namespace MisskeySharp
 
         private string _serializeObject<TObject>(TObject obj)
         {
-            var jsonDoc = JsonSerializer.SerializeToDocument<TObject>(obj, new JsonSerializerOptions()
-            {
-                PropertyNameCaseInsensitive = true,
-            });
+            //var jsonDoc = JsonSerializer.SerializeToDocument<TObject>(obj, new JsonSerializerOptions()
+            //{
+            //    PropertyNameCaseInsensitive = true,
+            //});
 
-            using (var ms = new MemoryStream())
-            using (var jw = new Utf8JsonWriter(ms))
+            //using (var ms = new MemoryStream())
+            //using (var jw = new Utf8JsonWriter(ms))
+            //{
+            //    jsonDoc.RootElement.WriteTo(jw);
+            //    jw.Flush();
+
+            //    var buf = ms.ToArray();
+            //    var json = Encoding.UTF8.GetString(buf);
+            //    return Encoding.UTF8.GetString(buf);
+            //}
+
+            return JsonSerializer.Serialize<TObject>(obj, new JsonSerializerOptions()
             {
-                jsonDoc.WriteTo(jw);
-                var buf = ms.ToArray();
-                return Encoding.UTF8.GetString(buf);
-            }
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            });
         }
 
 
@@ -200,7 +209,7 @@ namespace MisskeySharp
             }
         }
 
-        public async Task<TApiResponse> RequestAsync<TApiRequest, TApiResponse>(string endpoint, TApiRequest requestParam) where TApiRequest : MisskeyApiRequestParam
+        public async Task<TApiResponse> PostAsync<TApiRequest, TApiResponse>(string endpoint, TApiRequest requestParam) where TApiRequest : MisskeyApiRequestParam
         {
             var path = "/api/" + endpoint;
             requestParam.I = this.AccessToken;
