@@ -1,19 +1,14 @@
-﻿using MisskeySharp.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+
+using MisskeySharp.Entities;
 
 namespace MisskeySharp
 {
@@ -110,13 +105,13 @@ namespace MisskeySharp
             var resp = await this.RawPostAsync<object, TokenResponse>($"/api/miauth/{authorizeUriInfo.SessionId}/check");
             if (resp.Ok == false)
             {
-                throw new Exception("Failure to get tokens.");
+                throw new MisskeyException("Failure to get tokens.");
             }
 
             var tokenString = resp.Token;
             if (String.IsNullOrEmpty(tokenString))
             {
-                throw new Exception("Failure to get tokens.");
+                throw new MisskeyException("Failure to get tokens.");
             }
 
             this.AccessToken = tokenString;
@@ -130,7 +125,7 @@ namespace MisskeySharp
             // 何らかの方法で token の有効性を試す
         }
 
-        internal async Task<TResponse> RawGetAsync<TRequest, TResponse>(string path, TRequest request = default(TRequest)) where TResponse : MisskeyApiResponseBase
+        internal async Task<TResponse> RawGetAsync<TRequest, TResponse>(string path, TRequest request = default(TRequest)) where TResponse : MisskeyApiEntitiesBase
         {
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, this._getUri(path)))
             {
@@ -146,7 +141,7 @@ namespace MisskeySharp
             }
         }
 
-        internal async Task<TResponse> RawPostAsync<TRequest, TResponse>(string path, TRequest request = default(TRequest)) where TResponse : MisskeyApiResponseBase
+        internal async Task<TResponse> RawPostAsync<TRequest, TResponse>(string path, TRequest request = default(TRequest)) where TResponse : MisskeyApiEntitiesBase
         {
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, this._getUri(path)))
             {
@@ -162,7 +157,7 @@ namespace MisskeySharp
             }
         }
 
-        internal async Task<TResponse> RawRequestAsync<TResponse>(HttpRequestMessage requestMessage) where TResponse : MisskeyApiResponseBase
+        internal async Task<TResponse> RawRequestAsync<TResponse>(HttpRequestMessage requestMessage) where TResponse : MisskeyApiEntitiesBase
         {
             this._checkDisposed();
             if (this._httpClient == null)
@@ -181,7 +176,21 @@ namespace MisskeySharp
             }
         }
 
-        public async Task<TApiResponse> PostAsync<TApiRequest, TApiResponse>(string endpoint, TApiRequest requestParam) where TApiRequest : MisskeyApiRequestParam where TApiResponse : MisskeyApiResponseBase
+        public async Task<TApiResponse> GetAsync<TApiRequest, TApiResponse>(string endpoint, TApiRequest requestParam) where TApiRequest : MisskeyApiEntitiesBase where TApiResponse : MisskeyApiEntitiesBase
+        {
+            var path = "/api/" + endpoint;
+            requestParam.I = this.AccessToken;
+
+            var resp = await this.RawGetAsync<TApiRequest, TApiResponse>(path, requestParam);
+            if (resp.IsSuccess == false)
+            {
+                throw new MisskeyException(resp.Error);
+            }
+
+            return resp;
+        }
+
+        public async Task<TApiResponse> PostAsync<TApiRequest, TApiResponse>(string endpoint, TApiRequest requestParam) where TApiRequest : MisskeyApiEntitiesBase where TApiResponse : MisskeyApiEntitiesBase
         {
             var path = "/api/" + endpoint;
             requestParam.I = this.AccessToken;

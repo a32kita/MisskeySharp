@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace MisskeySharp.Entities
 {
-    public class Note : MisskeyApiRequestParam
+    public class Note : MisskeyApiEntitiesBase
     {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public string Id { get; set; }

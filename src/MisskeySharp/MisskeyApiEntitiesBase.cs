@@ -6,8 +6,13 @@ using MisskeySharp.Entities;
 
 namespace MisskeySharp
 {
-    public class MisskeyApiResponseBase
+    public class MisskeyApiEntitiesBase
     {
+        public string I
+        {
+            get; set;
+        }
+
         public int HttpStatusCode
         {
             get;
