@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MisskeySharp.Entities
 {
-    internal class TokenResponse
+    internal class TokenResponse : MisskeyApiResponseBase
     {
         public bool Ok { get; set; }
 

@@ -21,7 +21,7 @@ namespace MisskeySharp
     {
         private bool _disposed;
         private HttpClient _httpClient;
-        //private string _accessToken;
+        
 
         public string Host
         {
@@ -130,7 +130,7 @@ namespace MisskeySharp
             // 何らかの方法で token の有効性を試す
         }
 
-        public async Task<TResponse> RawGetAsync<TRequest, TResponse>(string path, TRequest request = default(TRequest))
+        internal async Task<TResponse> RawGetAsync<TRequest, TResponse>(string path, TRequest request = default(TRequest)) where TResponse : MisskeyApiResponseBase
         {
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, this._getUri(path)))
             {
@@ -146,7 +146,7 @@ namespace MisskeySharp
             }
         }
 
-        public async Task<TResponse> RawPostAsync<TRequest, TResponse>(string path, TRequest request = default(TRequest))
+        internal async Task<TResponse> RawPostAsync<TRequest, TResponse>(string path, TRequest request = default(TRequest)) where TResponse : MisskeyApiResponseBase
         {
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, this._getUri(path)))
             {
@@ -162,7 +162,7 @@ namespace MisskeySharp
             }
         }
 
-        public async Task<TResponse> RawRequestAsync<TResponse>(HttpRequestMessage requestMessage)
+        internal async Task<TResponse> RawRequestAsync<TResponse>(HttpRequestMessage requestMessage) where TResponse : MisskeyApiResponseBase
         {
             this._checkDisposed();
             if (this._httpClient == null)
@@ -171,34 +171,28 @@ namespace MisskeySharp
             using (var responseMessage = await this._httpClient.SendAsync(requestMessage))
             {
                 var contentStream = await responseMessage.Content.ReadAsStreamAsync();
-
-                //if (true)
-                //{
-                //    var debugStream = new MemoryStream();
-                //    contentStream.CopyTo(debugStream, (int)contentStream.Length);
-                //    contentStream.Seek(0, SeekOrigin.Begin);
-                //    using (var sr = new StreamReader(debugStream))
-                //    {
-                //        var json = sr.ReadToEnd();
-                //        Console.WriteLine(json);
-                //    }
-                //}
-
-                var respJson = await JsonSerializer.DeserializeAsync<TResponse>(contentStream, new JsonSerializerOptions()
+                var respObj = await JsonSerializer.DeserializeAsync<TResponse>(contentStream, new JsonSerializerOptions()
                 {
                     PropertyNameCaseInsensitive = true,
                 });
 
-                return respJson;
+                respObj.HttpStatusCode = (int)responseMessage.StatusCode;
+                return respObj;
             }
         }
 
-        public async Task<TApiResponse> PostAsync<TApiRequest, TApiResponse>(string endpoint, TApiRequest requestParam) where TApiRequest : MisskeyApiRequestParam
+        public async Task<TApiResponse> PostAsync<TApiRequest, TApiResponse>(string endpoint, TApiRequest requestParam) where TApiRequest : MisskeyApiRequestParam where TApiResponse : MisskeyApiResponseBase
         {
             var path = "/api/" + endpoint;
             requestParam.I = this.AccessToken;
 
-            return await this.RawPostAsync<TApiRequest, TApiResponse>(path, requestParam);
+            var resp = await this.RawPostAsync<TApiRequest, TApiResponse>(path, requestParam);
+            if (resp.IsSuccess == false)
+            {
+                throw new MisskeyException(resp.Error);
+            }
+
+            return resp;
         }
 
         public void Dispose()

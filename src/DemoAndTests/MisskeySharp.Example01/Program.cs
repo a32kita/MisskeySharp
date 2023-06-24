@@ -11,7 +11,7 @@ namespace MisskeySharp.Example01
             var misskey = new MisskeyService("https://misskey.io/");
             var accessToken = String.Empty;
 
-            accessToken = "98eYnAlHLBbNehoJ4KxYc6JDDM9sR63A";
+            accessToken = "98eYnAlHLBbNehoJ4KxYc6JDDM9sR63A+";
 
             // 認証
             if (String.IsNullOrEmpty(accessToken))
@@ -57,10 +57,18 @@ namespace MisskeySharp.Example01
             Console.WriteLine();
             Console.WriteLine("[Enter] キーを押下して続行します ...");
             Console.ReadLine();
-            await misskey.PostAsync<Note, Object>("notes/create", new Note()
+            try
             {
-                Text = demoText,
-            });
+                await misskey.PostAsync<Note, MisskeyApiResponseBase>("notes/create", new Note()
+                {
+                    Text = demoText,
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.GetType().Name}");
+                Console.WriteLine($"       {ex.Message}");
+            }
 
             // デモ終わり
             Console.WriteLine("サンプル プログラムによるデモが完了しました。");
