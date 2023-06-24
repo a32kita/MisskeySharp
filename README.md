@@ -38,8 +38,10 @@ await misskey.AuthorizeWithAccessTokenAsync("98eY****************************");
 #### Post a note
 
 ```csharp
-await misskey.PostAsync<Note, Object>("notes/create", new Note()
+await misskey.PostAsync<Note, NoteCreated>("notes/create", new Note()
             {
-                Text = "hello, world !!",
+                Text = demoText,
+                Visibility = "followers",
             });
+Console.WriteLine("Completed: {0}", resp.CreatedNote.Id);
 ```
