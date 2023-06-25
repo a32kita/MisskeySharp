@@ -9,7 +9,7 @@ The usage examples are as follows:
 
 ### Get a new access token with "miauth"
 
-** Step 1: Get a URL for authorize app page **
+** Step 1: Get a URL for authorize app page **  
 We will prepare to obtain the access token using "miauth".
 
 ```csharp
@@ -50,5 +50,5 @@ await misskey.PostAsync<Note, NoteCreated>("notes/create", new Note()
 Console.WriteLine("Completed: {0}", resp.CreatedNote.Id);
 ```
 
-For the parameters specified here, please refer to the official documentation:
+For the parameters specified here, please refer to the official documentation:  
 https://misskey-hub.net/docs/api/endpoints/notes/create.html
