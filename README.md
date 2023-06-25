@@ -54,3 +54,10 @@ Console.WriteLine("Completed: {0}", resp.CreatedNote.Id);
 
 For the parameters specified here, please refer to the official documentation:  
 https://misskey-hub.net/docs/api/endpoints/notes/create.html
+
+
+## Platform
+MisskeySharp is designed for .NET Standard 2.0, making it available for a wide range of .NET applications.
+
+Please refer to Microsoft's documentation for information on the targets that can apply .NET Standard 2.0 libraries:  
+https://learn.microsoft.com/ja-jp/dotnet/standard/net-standard?tabs=net-standard-2-0#select-net-standard-version
