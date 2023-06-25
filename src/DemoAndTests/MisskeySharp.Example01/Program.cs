@@ -59,13 +59,13 @@ namespace MisskeySharp.Example01
             Console.ReadLine();
             try
             {
-                //var resp = await misskey.PostAsync<Note, NoteCreated>("notes/create", new Note()
-                //{
-                //    Text = demoText,
-                //    //Visibility = "followers",
-                //});
+                var resp = await misskey.PostAsync<Note, NoteCreated>("notes/create", new Note()
+                {
+                    Text = demoText,
+                    //Visibility = "followers",
+                });
 
-                //Console.WriteLine("ノートの投稿が完了しました: {0}", resp.CreatedNote.Id);
+                Console.WriteLine("ノートの投稿が完了しました: {0}", resp.CreatedNote.Id);
             }
             catch (Exception ex)
             {
@@ -91,7 +91,7 @@ namespace MisskeySharp.Example01
                 Console.WriteLine("ノート検索結果;");
                 foreach (var note in resp)
                 {
-                    Console.WriteLine(" {0} | {1}", note.User.Username.PadRight(15), note.Text.Replace("\n", " "));
+                    Console.WriteLine(" {0} | {1}", note.User.Username.PadRight(10), note.Text.Replace("\n", " "));
                 }
             }
             catch (Exception ex)

@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
+using MisskeySharp.ClientEndpoints;
 using MisskeySharp.Entities;
 
 namespace MisskeySharp
@@ -36,6 +37,13 @@ namespace MisskeySharp
         }
 
 
+        public Notes Notes
+        {
+            get;
+            private set;
+        }
+
+
         public MisskeyService(string host)
         {
             this.Host = host;
@@ -44,6 +52,8 @@ namespace MisskeySharp
             this._httpClient = null;
 
             this.AccessToken = null;
+
+            this.Notes = new Notes(this);
         }
 
 
