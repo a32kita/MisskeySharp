@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -175,12 +176,20 @@ namespace MisskeySharp
 
             using (var responseMessage = await this._httpClient.SendAsync(requestMessage))
             {
+#if true
+                // 多分高速
                 var contentStream = await responseMessage.Content.ReadAsStreamAsync();
                 var respObj = await JsonSerializer.DeserializeAsync<TResponse>(contentStream, new JsonSerializerOptions()
                 {
                     PropertyNameCaseInsensitive = true,
                 });
-
+#else
+                var json = await responseMessage.Content.ReadAsStringAsync();
+                var respObj = JsonSerializer.Deserialize<TResponse>(json, new JsonSerializerOptions()
+                {
+                    PropertyNameCaseInsensitive = true,
+                });
+#endif
                 respObj.HttpStatusCode = (int)responseMessage.StatusCode;
                 return respObj;
             }

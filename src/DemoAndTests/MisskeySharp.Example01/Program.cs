@@ -51,6 +51,7 @@ namespace MisskeySharp.Example01
             }
 
             // デモ投稿
+#if false
             var demoText = "(Debug) API リクエスト テスト\nこれは Misskey API のコール試験投稿です。\n" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff") + "\n\n#a32kita_debug_notes";
             Console.WriteLine("次の内容を投稿してもよろしいですか？");
             Console.WriteLine(demoText);
@@ -73,9 +74,10 @@ namespace MisskeySharp.Example01
                 Console.WriteLine($"       {ex.Message}");
             }
             Console.WriteLine();
+#endif
 
-
-            // デモ検索
+// デモ検索
+#if false
             var demoKeyword = "#a32kita_debug_notes";
             Console.WriteLine("次のキーワードでノートを検索します: {0}", demoKeyword);
             Console.WriteLine("[Enter] キーを押下して続行します ...");
@@ -93,6 +95,31 @@ namespace MisskeySharp.Example01
                 {
                     Console.WriteLine(" {0} | {1}", note.User.Username.PadRight(10), note.Text.Replace("\n", " "));
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.GetType().Name}");
+                Console.WriteLine($"       {ex.Message}");
+            }
+            Console.WriteLine();
+#endif
+
+            // フォロワー取得
+            Console.WriteLine("フォロワーを取得します。");
+            Console.WriteLine("[Enter] キーを押下して続行します ...");
+            Console.ReadLine();
+            try
+            {
+                var resp = await misskey.PostAsync<UsersFollowingFollowersQuery, MisskeyApiEntitiesBase>("users/following", new UsersFollowingFollowersQuery()
+                {
+                    UserId = "9arwh5oymn",
+                });
+
+                //Console.WriteLine("ノート検索結果;");
+                //foreach (var note in resp)
+                //{
+                //    Console.WriteLine(" {0} | {1}", note.User.Username.PadRight(10), note.Text.Replace("\n", " "));
+                //}
             }
             catch (Exception ex)
             {
