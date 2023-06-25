@@ -15,9 +15,10 @@ We will prepare to obtain the access token using "miauth".
 ```csharp
 var misskey = new MisskeyService("https://misskey.io/");
 var authUri = misskey.GetAuthorizeUri(
-                    "サンプル (my app) ", // App name
-                    "https://www.a32kita.net/favicon.ico", // App icon url
-                    "https://dummy.a32kita.net/callback", // Callback url
+                    "サンプル (my app) " + DateTime.Now.ToString("yyyyMMdd-HHmmsss-fff"),
+                    "https://www.a32kita.net/favicon.ico",
+                    "https://dummy.a32kita.net/callback",
+                    MisskeyPermissions.Write_notes | MisskeyPermissions.Read_account);
 ```
 
 In *miauth*, you can use any value for the `GetAuthorizeUri()` parameter because it allows you to set the application name, icon, and callback URL during access token acquisition.
