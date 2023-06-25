@@ -9,7 +9,7 @@ The usage examples are as follows:
 
 ### Get a new access token with "miauth"
 
-** Step 1: Get a URL for authorize app page **  
+**Step 1: Get a URL for authorize app page**  
 We will prepare to obtain the access token using "miauth".
 
 ```csharp
@@ -22,7 +22,7 @@ var authUri = misskey.GetAuthorizeUri(
 
 In 'miauth,' you can use any value for the GetAuthorizeUri parameter because it allows you to set the application name, icon, and callback URL during access token acquisition.
 
-** Step 2: After the user approves the application in the browser, obtain the access token **
+**Step 2: After the user approves the application in the browser, obtain the access token**
 
 ```csharp
 await misskey.AuthorizeWithAuthorizeUriAsync(authUri);
