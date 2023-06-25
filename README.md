@@ -44,7 +44,7 @@ await misskey.AuthorizeWithAccessTokenAsync("98eY****************************");
 We will post a new note. In the following example, we will post a note with the content 'hello, world!!' to the timeline for followers.
 
 ```csharp
-await misskey.PostAsync<Note, NoteCreated>("notes/create", new Note()
+await misskey.Notes.Create(new Note()
             {
                 Text = "hello, world!!",
                 Visibility = "followers",

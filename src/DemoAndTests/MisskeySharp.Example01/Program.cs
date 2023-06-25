@@ -59,7 +59,7 @@ namespace MisskeySharp.Example01
             Console.ReadLine();
             try
             {
-                var resp = await misskey.PostAsync<Note, NoteCreated>("notes/create", new Note()
+                var resp = await misskey.Notes.Create(new Note()
                 {
                     Text = demoText,
                     //Visibility = "followers",
@@ -82,7 +82,7 @@ namespace MisskeySharp.Example01
             Console.ReadLine();
             try
             {
-                var resp = await misskey.PostAsync<NoteSearchQuery, NoteCollection>("notes/search", new NoteSearchQuery()
+                var resp = await misskey.Notes.Search(new NoteSearchQuery()
                 {
                     Query = demoKeyword,
                     Limit = 20,
