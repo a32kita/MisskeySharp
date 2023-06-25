@@ -20,6 +20,8 @@ var authUri = misskey.GetAuthorizeUri(
                     "https://dummy.a32kita.net/callback", // Callback url
 ```
 
+In 'miauth,' you can use any value for the GetAuthorizeUri parameter because it allows you to set the application name, icon, and callback URL during access token acquisition.
+
 ** Step 2: After the user approves the application in the browser, obtain the access token **
 
 ```csharp
