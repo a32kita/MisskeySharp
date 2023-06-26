@@ -57,6 +57,23 @@ For the parameters specified here, please refer to the official documentation:
 https://misskey-hub.net/docs/api/endpoints/notes/create.html
 
 
+### Retrieve a list of followed users
+Retrieve a list of followed users by specifying the user ID.
+
+```csharp
+var resp = await misskey.Users.Following(new UsersFollowingFollowersQuery()
+                {
+                    UserId = "9arwh5oymn",
+                });
+
+Console.WriteLine("Following list;");
+foreach (var follow in resp)
+{
+    Console.WriteLine(" {0} | {1}", follow.Followee.Username.PadRight(20), follow.Followee.Name);
+}
+```
+
+
 ## Platform
 MisskeySharp is designed for .NET Standard 2.0, making it available for a wide range of .NET applications.
 
