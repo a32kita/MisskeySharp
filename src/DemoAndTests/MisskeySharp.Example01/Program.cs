@@ -12,8 +12,11 @@ namespace MisskeySharp.Example01
             var misskey = new MisskeyService("https://misskey.io/");
             var accessToken = String.Empty;
 
-            accessToken = "98eYnAlHLBbNehoJ4KxYc6JDDM9sR63A";
+            Console.WriteLine("取得済みのアクセストークンがある場合は、入力してください。");
+            Console.Write(">");
+            accessToken = Console.ReadLine();
 
+            
             // 認証
             if (String.IsNullOrEmpty(accessToken))
             {
@@ -23,7 +26,7 @@ namespace MisskeySharp.Example01
                     "https://www.a32kita.net/favicon.ico",
                     "https://dummy.a32kita.net/callback",
                     MisskeyPermissions.Write_notes | MisskeyPermissions.Read_account);
-                Console.WriteLine("下記認証用 URL を開いて、アクセスを [承認] してください ...");
+                Console.WriteLine("下記認証用 URL を開いて、アプリのアクセスを [承認] してください ...");
                 Console.WriteLine(authUri.Uri);
                 Console.WriteLine();
 

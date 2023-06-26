@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\AOTO-04_OHD5E1\Public Development\MisskeySharp\src\MisskeySharp\MisskeySharp.csproj" />
+    <ProjectReference Include="..\..\MisskeySharp\MisskeySharp.csproj" />
   </ItemGroup>
 
 </Project>
