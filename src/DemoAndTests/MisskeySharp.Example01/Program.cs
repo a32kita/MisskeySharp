@@ -50,14 +50,35 @@ namespace MisskeySharp.Example01
                 await misskey.AuthorizeWithAccessTokenAsync(accessToken);
             }
 
+
+            // 自分の情報を取得
+            Console.WriteLine("自身の情報を取得します ...");
+            var userId = String.Empty;
+            try
+            {
+                var resp = await misskey.I.Get();
+                Console.WriteLine("I: {0} (@{1}) id={2}", resp.Name, resp.Username, resp.Id);
+
+                userId = resp.Id;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.GetType().Name}");
+                Console.WriteLine($"       {ex.Message}");
+                Console.WriteLine();
+                Console.WriteLine("自身の情報の取得に失敗したため、デモを終了します。");
+                Environment.Exit(1);
+            }
+
+
             // デモ投稿
 #if false
             var demoText = "(Debug) API リクエスト テスト\nこれは Misskey API のコール試験投稿です。\n" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff") + "\n\n#a32kita_debug_notes";
-            Console.WriteLine("次の内容を投稿してもよろしいですか？");
+            //Console.WriteLine("次の内容を投稿してもよろしいですか？");
             Console.WriteLine(demoText);
             Console.WriteLine();
-            Console.WriteLine("[Enter] キーを押下して続行します ...");
-            Console.ReadLine();
+            //Console.WriteLine("[Enter] キーを押下して続行します ...");
+            //Console.ReadLine();
             try
             {
                 var resp = await misskey.Notes.Create(new Note()
@@ -80,8 +101,8 @@ namespace MisskeySharp.Example01
 #if false
             var demoKeyword = "#a32kita_debug_notes";
             Console.WriteLine("次のキーワードでノートを検索します: {0}", demoKeyword);
-            Console.WriteLine("[Enter] キーを押下して続行します ...");
-            Console.ReadLine();
+            //Console.WriteLine("[Enter] キーを押下して続行します ...");
+            //Console.ReadLine();
             try
             {
                 var resp = await misskey.Notes.Search(new NoteSearchQuery()
@@ -105,15 +126,15 @@ namespace MisskeySharp.Example01
 #endif
 
             // フォロワー取得
-#if false
+#if true
             Console.WriteLine("フォローを取得します。");
-            Console.WriteLine("[Enter] キーを押下して続行します ...");
-            Console.ReadLine();
+            //Console.WriteLine("[Enter] キーを押下して続行します ...");
+            //Console.ReadLine();
             try
             {
                 var resp = await misskey.Users.Following(new UsersFollowingFollowersQuery()
                 {
-                    UserId = "9arwh5oymn",
+                    UserId = userId,
                 });
 
                 Console.WriteLine("フォロー取得結果;");
@@ -131,14 +152,15 @@ namespace MisskeySharp.Example01
 #endif
 
             // ユーザーのノートの取得
+#if true
             Console.WriteLine("ユーザーのノートの取得");
-            Console.WriteLine("[Enter] キーを押下して続行します ...");
-            Console.ReadLine();
+            //Console.WriteLine("[Enter] キーを押下して続行します ...");
+            //Console.ReadLine();
             try
             {
                 var resp = await misskey.Users.Notes(new UsersNoteQuery()
                 {
-                    UserId = "9arwh5oymn",
+                    UserId = userId,
                 });
 
                 Console.WriteLine("ユーザーノート取得結果;");
@@ -152,6 +174,7 @@ namespace MisskeySharp.Example01
                 Console.WriteLine($"Error: {ex.GetType().Name}");
                 Console.WriteLine($"       {ex.Message}");
             }
+#endif
 
 
             // デモ終わり

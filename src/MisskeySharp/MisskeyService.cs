@@ -50,6 +50,12 @@ namespace MisskeySharp
             private set;
         }
 
+        public I I
+        {
+            get;
+            private set;
+        }
+
 
         public MisskeyService(string host)
         {
@@ -62,6 +68,7 @@ namespace MisskeySharp
 
             this.Notes = new Notes(this);
             this.Users = new Users(this);
+            this.I = new I(this);
         }
 
 
@@ -202,19 +209,19 @@ namespace MisskeySharp
             }
         }
 
-        public async Task<TApiResponse> GetAsync<TApiRequest, TApiResponse>(string endpoint, TApiRequest requestParam) where TApiRequest : MisskeyApiEntitiesBase where TApiResponse : MisskeyApiEntitiesBase
-        {
-            var path = "/api/" + endpoint;
-            requestParam.I = this.AccessToken;
+        //public async Task<TApiResponse> GetAsync<TApiRequest, TApiResponse>(string endpoint, TApiRequest requestParam) where TApiRequest : MisskeyApiEntitiesBase where TApiResponse : MisskeyApiEntitiesBase
+        //{
+        //    var path = "/api/" + endpoint;
+        //    requestParam.I = this.AccessToken;
 
-            var resp = await this.RawGetAsync<TApiRequest, TApiResponse>(path, requestParam);
-            if (resp.IsSuccess == false)
-            {
-                throw new MisskeyException(resp.Error);
-            }
+        //    var resp = await this.RawGetAsync<TApiRequest, TApiResponse>(path, requestParam);
+        //    if (resp.IsSuccess == false)
+        //    {
+        //        throw new MisskeyException(resp.Error);
+        //    }
 
-            return resp;
-        }
+        //    return resp;
+        //}
 
         public async Task<TApiResponse> PostAsync<TApiRequest, TApiResponse>(string endpoint, TApiRequest requestParam) where TApiRequest : MisskeyApiEntitiesBase where TApiResponse : MisskeyApiEntitiesBase
         {

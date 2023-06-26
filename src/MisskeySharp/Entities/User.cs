@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MisskeySharp.Entities
 {
-    public class User
+    public class User : MisskeyApiEntitiesBase
     {
         public string Id { get; set; }
         public string Name { get; set; }
