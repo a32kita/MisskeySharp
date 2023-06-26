@@ -14,6 +14,7 @@
     <Version>$([System.DateTime]::Now.ToString('0.yy.M.dHH'))</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Title>$(AssemblyName)</Title>
   </PropertyGroup>
 
   <ItemGroup>
