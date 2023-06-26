@@ -44,6 +44,12 @@ namespace MisskeySharp
             private set;
         }
 
+        public Users Users
+        {
+            get;
+            private set;
+        }
+
 
         public MisskeyService(string host)
         {
@@ -55,6 +61,7 @@ namespace MisskeySharp
             this.AccessToken = null;
 
             this.Notes = new Notes(this);
+            this.Users = new Users(this);
         }
 
 
@@ -176,7 +183,7 @@ namespace MisskeySharp
 
             using (var responseMessage = await this._httpClient.SendAsync(requestMessage))
             {
-#if true
+#if false
                 // 多分高速
                 var contentStream = await responseMessage.Content.ReadAsStreamAsync();
                 var respObj = await JsonSerializer.DeserializeAsync<TResponse>(contentStream, new JsonSerializerOptions()

@@ -76,7 +76,7 @@ namespace MisskeySharp.Example01
             Console.WriteLine();
 #endif
 
-// デモ検索
+            // デモ検索
 #if false
             var demoKeyword = "#a32kita_debug_notes";
             Console.WriteLine("次のキーワードでノートを検索します: {0}", demoKeyword);
@@ -105,21 +105,22 @@ namespace MisskeySharp.Example01
 #endif
 
             // フォロワー取得
-            Console.WriteLine("フォロワーを取得します。");
+#if false
+            Console.WriteLine("フォローを取得します。");
             Console.WriteLine("[Enter] キーを押下して続行します ...");
             Console.ReadLine();
             try
             {
-                var resp = await misskey.PostAsync<UsersFollowingFollowersQuery, MisskeyApiEntitiesBase>("users/following", new UsersFollowingFollowersQuery()
+                var resp = await misskey.Users.Following(new UsersFollowingFollowersQuery()
                 {
                     UserId = "9arwh5oymn",
                 });
 
-                //Console.WriteLine("ノート検索結果;");
-                //foreach (var note in resp)
-                //{
-                //    Console.WriteLine(" {0} | {1}", note.User.Username.PadRight(10), note.Text.Replace("\n", " "));
-                //}
+                Console.WriteLine("フォロー取得結果;");
+                foreach (var follow in resp)
+                {
+                    Console.WriteLine(" {0} | {1}", follow.Followee.Username.PadRight(20), follow.Followee.Name);
+                }
             }
             catch (Exception ex)
             {
@@ -127,6 +128,30 @@ namespace MisskeySharp.Example01
                 Console.WriteLine($"       {ex.Message}");
             }
             Console.WriteLine();
+#endif
+
+            // ユーザーのノートの取得
+            Console.WriteLine("ユーザーのノートの取得");
+            Console.WriteLine("[Enter] キーを押下して続行します ...");
+            Console.ReadLine();
+            try
+            {
+                var resp = await misskey.Users.Notes(new UsersNoteQuery()
+                {
+                    UserId = "9arwh5oymn",
+                });
+
+                Console.WriteLine("ユーザーノート取得結果;");
+                foreach (var note in resp)
+                {
+                    Console.WriteLine(" {0} | {1}", note.User.Username.PadRight(10), note.Text.Replace("\n", " "));
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.GetType().Name}");
+                Console.WriteLine($"       {ex.Message}");
+            }
 
 
             // デモ終わり
