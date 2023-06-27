@@ -25,7 +25,7 @@ namespace MisskeySharp
         }
 
         public MisskeyException(MisskeyApiError apiError)
-            : this(apiError.Message)
+            : this(apiError?.Message)
         {
             this.ApiError = apiError;
         }

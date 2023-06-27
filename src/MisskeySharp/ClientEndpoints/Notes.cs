@@ -9,9 +9,18 @@ namespace MisskeySharp.ClientEndpoints
 {
     public class Notes : EndpointBase
     {
+        public Notes_Favorites Favorites
+        {
+            get;
+            private set;
+        }
+
+
         internal Notes(MisskeyService parent)
             : base(parent)
-        { }
+        {
+            this.Favorites = new Notes_Favorites(parent);
+        }
 
 
         public async Task<NoteCreated> Create(Note note)

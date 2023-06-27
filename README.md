@@ -3,6 +3,9 @@
 ## What's this ?
 MisskeySharp is a client library for .NET applications to utilize Misskey.
 
+:::note info
+This library is not an official offering by the Misskey developers.
+:::
 
 ## Example
 The usage examples are as follows:

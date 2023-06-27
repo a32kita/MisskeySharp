@@ -203,7 +203,7 @@ namespace MisskeySharp.Example01
 #endif
 
             // 他人のユーザー情報の取得
-#if true
+#if false
             Console.WriteLine("他のユーザーの情報の取得");
             try
             {
@@ -223,7 +223,7 @@ namespace MisskeySharp.Example01
 #endif
 
             // 通知の取得
-#if true
+#if false
             Console.WriteLine("通知の取得");
             try
             {
@@ -246,8 +246,9 @@ namespace MisskeySharp.Example01
 #endif
 
             // タイムラインの取得
-#if true
+#if false
             Console.WriteLine("タイムラインの取得");
+            var latestNoteId = String.Empty;
             try
             {
                 var resp = await misskey.Notes.Timeline(new NotesTimelineParameter()
@@ -264,6 +265,11 @@ namespace MisskeySharp.Example01
                         note = note.Renote;
                     }
 
+                    if (String.IsNullOrEmpty(latestNoteId))
+                    {
+                        latestNoteId = note.Id;
+                    }
+
                     Console.WriteLine(" {0} | {1}", note.User?.Username?.PadRight(10), note.Text?.Replace("\n", " "));
                 }
             }
@@ -275,7 +281,7 @@ namespace MisskeySharp.Example01
 #endif
 
             // トレンドの取得
-#if true
+#if false
             Console.WriteLine("トレンドの取得");
             try
             {
@@ -293,6 +299,36 @@ namespace MisskeySharp.Example01
                 Console.WriteLine($"       {ex.Message}");
             }
 #endif
+
+
+            // ふぁぼ
+#if false
+            Console.WriteLine("お気に入り登録");
+            try
+            {
+                await misskey.Notes.Favorites.Create(new NotesFavoriteCreateParameter()
+                {
+                    NoteId = latestNoteId
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.GetType().Name}");
+                Console.WriteLine($"       {ex.Message}");
+            }
+#endif
+
+            // ストリーミング
+            Console.WriteLine("ストリーミング");
+            try
+            {
+                misskey.Streaming.Connect(Streaming.MisskeyStreamingChannels.LocalTimeline);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.GetType().Name}");
+                Console.WriteLine($"       {ex.Message}");
+            }
 
 
             // デモ終わり
