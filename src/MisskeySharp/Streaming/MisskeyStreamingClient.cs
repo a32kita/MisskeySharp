@@ -35,7 +35,7 @@ namespace MisskeySharp.Streaming
         {
             var hostUri = new Uri(this._parent.Host);
             var actualHostName = hostUri.Host;
-            return new Uri($"ws://{actualHostName}/streaming?i={this._parent.AccessToken}");
+            return new Uri($"wss://{actualHostName}/streaming?i={this._parent.AccessToken}");
         }
 
         private string _serialize<T>(T value)
@@ -74,6 +74,12 @@ namespace MisskeySharp.Streaming
                     Id = Guid.NewGuid().ToString(),
                 }
             }));
+
+            while (true)
+            {
+                Thread.Sleep(500);
+                Console.WriteLine("Running: " + this._webSocketClient.IsReceiveProcRunning);
+            }
         }
 
 

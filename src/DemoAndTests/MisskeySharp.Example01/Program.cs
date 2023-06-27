@@ -322,7 +322,7 @@ namespace MisskeySharp.Example01
             Console.WriteLine("ストリーミング");
             try
             {
-                misskey.Streaming.Connect(Streaming.MisskeyStreamingChannels.LocalTimeline);
+                misskey.Streaming.Connect(Streaming.MisskeyStreamingChannels.HybridTimeline);
             }
             catch (Exception ex)
             {

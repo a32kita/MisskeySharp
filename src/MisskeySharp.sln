@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MisskeySharp", "MisskeyShar
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DemoAndTests", "DemoAndTests", "{BCD2E96D-E73D-40D4-8144-FAB17A368AAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MisskeySharp.Example01", "..\..\..\..\Public Development\MisskeySharp\src\DemoAndTests\MisskeySharp.Example01\MisskeySharp.Example01.csproj", "{660B6A7D-7E7F-42B4-8EB0-285DFE8A3ED9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MisskeySharp.Example01", "DemoAndTests\MisskeySharp.Example01\MisskeySharp.Example01.csproj", "{660B6A7D-7E7F-42B4-8EB0-285DFE8A3ED9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MisskeySharp.StreamingCT", "DemoAndTests\MisskeySharp.StreamingCT\MisskeySharp.StreamingCT.csproj", "{8A0956A3-D6FC-416B-AD10-D2450C7A6EF7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,12 +25,17 @@ Global
 		{660B6A7D-7E7F-42B4-8EB0-285DFE8A3ED9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{660B6A7D-7E7F-42B4-8EB0-285DFE8A3ED9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{660B6A7D-7E7F-42B4-8EB0-285DFE8A3ED9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A0956A3-D6FC-416B-AD10-D2450C7A6EF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A0956A3-D6FC-416B-AD10-D2450C7A6EF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A0956A3-D6FC-416B-AD10-D2450C7A6EF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A0956A3-D6FC-416B-AD10-D2450C7A6EF7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{660B6A7D-7E7F-42B4-8EB0-285DFE8A3ED9} = {BCD2E96D-E73D-40D4-8144-FAB17A368AAF}
+		{8A0956A3-D6FC-416B-AD10-D2450C7A6EF7} = {BCD2E96D-E73D-40D4-8144-FAB17A368AAF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BD41C547-FC8C-4F77-86C0-67AE6DF18856}

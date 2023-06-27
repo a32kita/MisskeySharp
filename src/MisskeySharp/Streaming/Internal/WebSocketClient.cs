@@ -16,7 +16,7 @@ namespace MisskeySharp.Streaming.Internal
         private ReceivingProcess _receivingProcess;
         private Thread _receivingThread;
 
-        public bool IsRunning
+        public bool IsReceiveProcRunning
         {
             get => this._receivingThread == null ? false : this._receivingThread.IsAlive;
         }
@@ -61,7 +61,7 @@ namespace MisskeySharp.Streaming.Internal
                 }
             }
 
-            this._clientWebSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(data)), WebSocketMessageType.Text, true, CancellationToken.None);
+            Task.Run(async () => await this._clientWebSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(data)), WebSocketMessageType.Text, true, CancellationToken.None)).Wait();
         }
 
         public void Close()
@@ -124,11 +124,13 @@ namespace MisskeySharp.Streaming.Internal
 
                 while (true)
                 {
+                    Console.WriteLine("Connection: Waiting ...");
                     var segment = new ArraySegment<byte>(buffer);
-                    var result = this.ClientWebSocket.ReceiveAsync(segment, CancellationToken.None).Result;
+                    var result = Task.Run(async () => await this.ClientWebSocket.ReceiveAsync(segment, CancellationToken.None)).Result;
                     if (result.MessageType == WebSocketMessageType.Close)
                     {
-                        this.ClientWebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "OK", CancellationToken.None).Wait();
+                        Task.Run(async () => await this.ClientWebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "OK", CancellationToken.None)).Wait();
+                        Console.WriteLine("Connection: Closed");
                         return;
                     }
 
@@ -139,15 +141,16 @@ namespace MisskeySharp.Streaming.Internal
                     {
                         if (byteCount >= buffer.Length)
                         {
-                            this.ClientWebSocket.CloseAsync(
-                                WebSocketCloseStatus.InvalidPayloadData, "Payload is too long", CancellationToken.None).Wait();
+                            Task.Run(async () => await this.ClientWebSocket.CloseAsync(
+                                WebSocketCloseStatus.InvalidPayloadData, "Payload is too long", CancellationToken.None)).Wait();
                             return;
                         }
 
                         segment = new ArraySegment<byte>(buffer, byteCount, buffer.Length - byteCount);
-                        result = this.ClientWebSocket.ReceiveAsync(segment, CancellationToken.None).Result;
+                        result = Task.Run(async () => await this.ClientWebSocket.ReceiveAsync(segment, CancellationToken.None)).Result;
 
                         byteCount += result.Count;
+                        Console.WriteLine("Connection: Receiving {0} bytes", byteCount);
                     }
 
                     var json = Encoding.UTF8.GetString(buffer, 0, byteCount);
