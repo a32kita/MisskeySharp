@@ -56,6 +56,12 @@ namespace MisskeySharp
             private set;
         }
 
+        public Hashtags Hashtags
+        {
+            get;
+            private set;
+        }
+
 
         public MisskeyService(string host)
         {
@@ -69,6 +75,7 @@ namespace MisskeySharp
             this.Notes = new Notes(this);
             this.Users = new Users(this);
             this.I = new I(this);
+            this.Hashtags = new Hashtags(this);
         }
 
 

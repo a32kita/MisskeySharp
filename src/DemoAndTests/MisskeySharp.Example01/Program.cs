@@ -256,9 +256,35 @@ namespace MisskeySharp.Example01
                 });
 
                 Console.WriteLine("タイムライン取得結果;");
-                foreach (var note in resp)
+                foreach (var n in resp)
                 {
+                    var note = n;
+                    if (note.Renote != null)
+                    {
+                        note = note.Renote;
+                    }
+
                     Console.WriteLine(" {0} | {1}", note.User?.Username?.PadRight(10), note.Text?.Replace("\n", " "));
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.GetType().Name}");
+                Console.WriteLine($"       {ex.Message}");
+            }
+#endif
+
+            // トレンドの取得
+#if true
+            Console.WriteLine("トレンドの取得");
+            try
+            {
+                var resp = await misskey.Hashtags.Trend();
+
+                Console.WriteLine("トレンド取得結果");
+                foreach (var trend in resp)
+                {
+                    Console.WriteLine(" {0}", trend.Tag);
                 }
             }
             catch (Exception ex)
