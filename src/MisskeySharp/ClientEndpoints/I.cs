@@ -18,5 +18,10 @@ namespace MisskeySharp.ClientEndpoints
         {
             return await this.Parent.PostAsync<VoidParameter, User>("i", new VoidParameter());
         }
+
+        public async Task<NotificationCollection> Notifications(NotificationParameter parameter)
+        {
+            return await this.Parent.PostAsync<NotificationParameter, NotificationCollection>("i/notifications", parameter);
+        }
     }
 }

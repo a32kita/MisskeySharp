@@ -78,7 +78,7 @@ foreach (var follow in resp)
 Now available on [NuGet](https://www.nuget.org/packages/MisskeySharp/)
 
 ```
-NuGet\Install-Package MisskeySharp -Version 0.23.6.26
+NuGet\Install-Package MisskeySharp
 ```
 
 

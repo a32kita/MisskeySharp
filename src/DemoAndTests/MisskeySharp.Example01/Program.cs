@@ -129,7 +129,7 @@ namespace MisskeySharp.Example01
 #endif
 
             // フォロワー取得
-#if true
+#if false
             Console.WriteLine("フォローを取得します。");
             //Console.WriteLine("[Enter] キーを押下して続行します ...");
             //Console.ReadLine();
@@ -180,7 +180,7 @@ namespace MisskeySharp.Example01
 #endif
 
             // ユーザーの検索
-#if true
+#if false
             Console.WriteLine("ユーザーの検索");
             try
             {
@@ -193,6 +193,98 @@ namespace MisskeySharp.Example01
                 foreach (var user in resp)
                 {
                     Console.WriteLine(" {0} (@{1})", user.Name, user.Username);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.GetType().Name}");
+                Console.WriteLine($"       {ex.Message}");
+            }
+#endif
+
+            // 他人のユーザー情報の取得
+#if true
+            Console.WriteLine("他のユーザーの情報の取得");
+            try
+            {
+                var resp = await misskey.Users.Show(new UsersShowParameter()
+                {
+                    Username = "utatane_live_bot",
+                });
+
+                Console.WriteLine("ユーザー情報の取得結果;");
+                Console.WriteLine(" {0} (@{1}) / {2}", resp.Name, resp.Username, resp.Id);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.GetType().Name}");
+                Console.WriteLine($"       {ex.Message}");
+            }
+#endif
+
+            // 通知の取得
+#if true
+            Console.WriteLine("通知の取得");
+            try
+            {
+                var resp = await misskey.I.Notifications(new NotificationParameter()
+                {
+
+                });
+
+                Console.WriteLine("通知の取得結果;");
+                foreach (var n in resp)
+                {
+                    Console.WriteLine(" {0}: {1} by @{2}", n.CreatedAt.ToString("MM/dd HH:mm:ss"), n.Type, n.User?.Username);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.GetType().Name}");
+                Console.WriteLine($"       {ex.Message}");
+            }
+#endif
+
+            // タイムラインの取得
+#if true
+            Console.WriteLine("タイムラインの取得");
+            try
+            {
+                var resp = await misskey.Notes.Timeline(new NotesTimelineParameter()
+                {
+
+                });
+
+                Console.WriteLine("タイムライン取得結果;");
+                foreach (var n in resp)
+                {
+                    var note = n;
+                    if (note.Renote != null)
+                    {
+                        note = note.Renote;
+                    }
+
+                    Console.WriteLine(" {0} | {1}", note.User?.Username?.PadRight(10), note.Text?.Replace("\n", " "));
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.GetType().Name}");
+                Console.WriteLine($"       {ex.Message}");
+            }
+#endif
+
+            // トレンドの取得
+#if true
+            Console.WriteLine("トレンドの取得");
+            try
+            {
+                var resp = await misskey.Hashtags.Trend();
+
+                Console.WriteLine("トレンド取得結果");
+                foreach (var trend in resp)
+                {
+                    Console.WriteLine(" {0}", trend.Tag);
                 }
             }
             catch (Exception ex)
