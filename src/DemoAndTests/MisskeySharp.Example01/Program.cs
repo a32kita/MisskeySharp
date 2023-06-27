@@ -155,7 +155,7 @@ namespace MisskeySharp.Example01
 #endif
 
             // ユーザーのノートの取得
-#if true
+#if false
             Console.WriteLine("ユーザーのノートの取得");
             //Console.WriteLine("[Enter] キーを押下して続行します ...");
             //Console.ReadLine();
@@ -170,6 +170,29 @@ namespace MisskeySharp.Example01
                 foreach (var note in resp)
                 {
                     Console.WriteLine(" {0} | {1}", note.User.Username.PadRight(10), note.Text.Replace("\n", " "));
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.GetType().Name}");
+                Console.WriteLine($"       {ex.Message}");
+            }
+#endif
+
+            // ユーザーの検索
+#if true
+            Console.WriteLine("ユーザーの検索");
+            try
+            {
+                var resp = await misskey.Users.Search(new UsersSearchQuery()
+                {
+                    Query = "a32kita"
+                });
+
+                Console.WriteLine("ユーザーの検索結果");
+                foreach (var user in resp)
+                {
+                    Console.WriteLine(" {0} (@{1})", user.Name, user.Username);
                 }
             }
             catch (Exception ex)
