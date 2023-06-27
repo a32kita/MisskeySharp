@@ -2,6 +2,19 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Company>Explorers of the Binary World / a32kita</Company>
+    <Authors>Explorers of the Binary World / a32kita</Authors>
+    <PackageProjectUrl>https://github.com/a32kita/MisskeySharp</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/a32kita/MisskeySharp</RepositoryUrl>
+    <AssemblyVersion>$([System.DateTime]::Now.ToString('0.yy.M.dHH'))</AssemblyVersion>
+    <FileVersion>$([System.DateTime]::Now.ToString('0.yy.M.dHH'))</FileVersion>
+    <PackageTags>Misskey</PackageTags>
+    <Description>MisskeySharp is a client library for .NET applications to utilize Misskey.</Description>
+    <Version>$([System.DateTime]::Now.ToString('0.yy.M.dHH'))</Version>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Title>$(AssemblyName)</Title>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,6 +23,13 @@
 
   <ItemGroup>
     <Folder Include="InternalUtils\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

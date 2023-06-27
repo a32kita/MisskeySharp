@@ -74,6 +74,14 @@ foreach (var follow in resp)
 ```
 
 
+## Install
+Now available on [NuGet](https://www.nuget.org/packages/MisskeySharp/)
+
+```
+NuGet\Install-Package MisskeySharp -Version 0.23.6.26
+```
+
+
 ## Platform
 MisskeySharp is designed for .NET Standard 2.0, making it available for a wide range of .NET applications.
 
