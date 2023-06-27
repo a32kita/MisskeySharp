@@ -23,5 +23,10 @@ namespace MisskeySharp.ClientEndpoints
         {
             return await this.Parent.PostAsync<NoteSearchQuery, NoteCollection>("notes/search", query);
         }
+
+        public async Task<NoteCollection> Timeline(NotesTimelineParameter parameter)
+        {
+            return await this.Parent.PostAsync<NotesTimelineParameter, NoteCollection>("notes/timeline", parameter);
+        }
     }
 }

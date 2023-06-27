@@ -47,15 +47,18 @@ namespace MisskeySharp.Entities
         public Emojis ReactionEmojis { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public List<object> FileIds { get; set; }
+        public List<string> FileIds { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public List<object> Files { get; set; }
+        public List<File> Files { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public object ReplyId { get; set; }
+        public string ReplyId { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public object RenoteId { get; set; }
+        public string RenoteId { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public Note Renote { get; set; }
     }
 }

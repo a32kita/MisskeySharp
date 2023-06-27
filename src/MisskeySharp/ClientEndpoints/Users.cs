@@ -30,5 +30,10 @@ namespace MisskeySharp.ClientEndpoints
         {
             return await this.Parent.PostAsync<UsersSearchQuery, UserCollection>("users/search", query);
         }
+
+        public async Task<User> Show(UsersShowParameter parameter)
+        {
+            return await this.Parent.PostAsync<UsersShowParameter, User>("users/show", parameter);
+        }
     }
 }

@@ -150,7 +150,7 @@ namespace MisskeySharp
             // 何らかの方法で token の有効性を試す
         }
 
-        internal async Task<TResponse> RawGetAsync<TRequest, TResponse>(string path, TRequest request = default(TRequest)) where TResponse : MisskeyApiEntitiesBase
+        internal async Task<TResponse> RawGetAsync<TRequest, TResponse>(string path, TRequest request = default(TRequest)) where TResponse : MisskeyApiEntitiesBase, new()
         {
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, this._getUri(path)))
             {
@@ -166,7 +166,7 @@ namespace MisskeySharp
             }
         }
 
-        internal async Task<TResponse> RawPostAsync<TRequest, TResponse>(string path, TRequest request = default(TRequest)) where TResponse : MisskeyApiEntitiesBase
+        internal async Task<TResponse> RawPostAsync<TRequest, TResponse>(string path, TRequest request = default(TRequest)) where TResponse : MisskeyApiEntitiesBase, new()
         {
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, this._getUri(path)))
             {
@@ -182,7 +182,7 @@ namespace MisskeySharp
             }
         }
 
-        internal async Task<TResponse> RawRequestAsync<TResponse>(HttpRequestMessage requestMessage) where TResponse : MisskeyApiEntitiesBase
+        internal async Task<TResponse> RawRequestAsync<TResponse>(HttpRequestMessage requestMessage) where TResponse : MisskeyApiEntitiesBase, new()
         {
             this._checkDisposed();
             if (this._httpClient == null)
@@ -190,20 +190,33 @@ namespace MisskeySharp
 
             using (var responseMessage = await this._httpClient.SendAsync(requestMessage))
             {
-#if false
-                // 多分高速
-                var contentStream = await responseMessage.Content.ReadAsStreamAsync();
-                var respObj = await JsonSerializer.DeserializeAsync<TResponse>(contentStream, new JsonSerializerOptions()
+                TResponse respObj = null;
+
+                try
                 {
-                    PropertyNameCaseInsensitive = true,
-                });
+#if true
+                    // 多分高速
+                    var contentStream = await responseMessage.Content.ReadAsStreamAsync();
+                    
+                    respObj = await JsonSerializer.DeserializeAsync<TResponse>(contentStream, new JsonSerializerOptions()
+                    {
+                        PropertyNameCaseInsensitive = true,
+                    });
 #else
-                var json = await responseMessage.Content.ReadAsStringAsync();
-                var respObj = JsonSerializer.Deserialize<TResponse>(json, new JsonSerializerOptions()
-                {
-                    PropertyNameCaseInsensitive = true,
-                });
+                    var json = await responseMessage.Content.ReadAsStringAsync();
+                    
+                    respObj = JsonSerializer.Deserialize<TResponse>(json, new JsonSerializerOptions()
+                    {
+                        PropertyNameCaseInsensitive = true,
+                    });
 #endif
+                }
+                catch (Exception ex)
+                {
+                    respObj = new TResponse();
+                    respObj.JsonDeserializeError = ex;
+                }
+
                 respObj.HttpStatusCode = (int)responseMessage.StatusCode;
                 return respObj;
             }
@@ -223,7 +236,7 @@ namespace MisskeySharp
         //    return resp;
         //}
 
-        public async Task<TApiResponse> PostAsync<TApiRequest, TApiResponse>(string endpoint, TApiRequest requestParam) where TApiRequest : MisskeyApiEntitiesBase where TApiResponse : MisskeyApiEntitiesBase
+        public async Task<TApiResponse> PostAsync<TApiRequest, TApiResponse>(string endpoint, TApiRequest requestParam) where TApiRequest : MisskeyApiEntitiesBase where TApiResponse : MisskeyApiEntitiesBase, new()
         {
             var path = "/api/" + endpoint;
             requestParam.I = this.AccessToken;

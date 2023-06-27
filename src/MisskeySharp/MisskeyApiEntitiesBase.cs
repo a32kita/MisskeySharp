@@ -32,5 +32,12 @@ namespace MisskeySharp
             get;
             set;
         }
+
+        [JsonIgnore]
+        public Exception JsonDeserializeError
+        {
+            get;
+            set;
+        }
     }
 }
