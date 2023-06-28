@@ -8,10 +8,10 @@ MisskeySharp is a client library for .NET applications to utilize Misskey.
 ## Example
 The usage examples are as follows:
 
-### Get a new access token with "miauth"
+### Get a new access token with "MiAuth"
 
 **Step 1: Get a URL for authorize app page**  
-We will prepare to obtain the access token using "miauth".
+We will prepare to obtain the access token using "MiAuth".
 
 ```csharp
 var misskey = new MisskeyService("https://misskey.io/");
@@ -22,7 +22,7 @@ var authUri = misskey.GetAuthorizeUri(
                     MisskeyPermissions.Write_notes | MisskeyPermissions.Read_account);
 ```
 
-In *miauth*, you can use any value for the `GetAuthorizeUri()` parameter because it allows you to set the application name, icon, and callback URL during access token acquisition.
+In *MiAuth*, you can use any value for the `GetAuthorizeUri()` parameter because it allows you to set the application name, icon, and callback URL during access token acquisition.
 
 **Step 2: After the user approves the application in the browser, obtain the access token**
 
@@ -123,3 +123,9 @@ MisskeySharp is designed for .NET Standard 2.0, making it available for a wide r
 
 Please refer to Microsoft's documentation for information on the targets that can apply .NET Standard 2.0 libraries:  
 https://learn.microsoft.com/ja-jp/dotnet/standard/net-standard?tabs=net-standard-2-0#select-net-standard-version
+
+
+## Dependencies
+* [System.Text.Json](https://www.nuget.org/packages/System.Text.Json)
+
+If you are using MisskeySharp via NuGet, it will be automatically installed.
