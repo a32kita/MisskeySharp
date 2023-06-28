@@ -84,7 +84,7 @@ Using the Streaming API to receive the timeline in real-time. Events will be tri
 
 <details>
 <summary>Example code</summary>
-**Notice: This feature is currently under verification and there is a possibility of significant specification changes in the future**
+Notice: This feature is currently under verification and there is a possibility of significant specification changes in the future
 
 ```csharp
 var noteReceived = new Action<MisskeyNoteReceivedEventArgs>(e =>
