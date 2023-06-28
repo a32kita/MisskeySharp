@@ -333,13 +333,13 @@ namespace MisskeySharp.Example01
                     if (rn)
                         note = note.Renote;
 
-                    Console.WriteLine("R {0}: (@{1}) {2}", rn ? "REN" : "NML", note?.User?.Username, note?.Text);
+                    Console.WriteLine("R {0}: (@{1}) {2}", rn ? "RENOTE" : "NORMAL", note?.User?.Username, note?.Text);
                 });
 
                 misskey.Streaming.NoteReceived += (sender, e) => noteReceived(e);
                 misskey.Streaming.ConnectionClosed += (sender, e) => Console.WriteLine("Streaming connection: closed.");
                 
-                var st = misskey.Streaming.Connect(Streaming.MisskeyStreamingChannels.HybridTimeline);
+                var st = misskey.Streaming.Connect(MisskeyStreamingChannels.HybridTimeline);
                 
                 Console.ReadLine();
 
