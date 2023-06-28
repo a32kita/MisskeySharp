@@ -61,6 +61,9 @@ https://misskey-hub.net/docs/api/endpoints/notes/create.html
 ### Retrieve a list of followed users
 Retrieve a list of followed users by specifying the user ID.
 
+<details>
+<summary>Example code</summary>
+
 ```csharp
 var resp = await misskey.Users.Following(new UsersFollowingFollowersQuery()
                 {
@@ -73,6 +76,38 @@ foreach (var follow in resp)
     Console.WriteLine(" {0} | {1}", follow.Followee.Username.PadRight(20), follow.Followee.Name);
 }
 ```
+</details>
+
+
+### Receiving a timeline through the streaming API
+Using the Streaming API to receive the timeline in real-time. Events will be triggered upon receiving new notes.
+
+<details>
+<summary>Example code</summary>
+**Notice: This feature is currently under verification and there is a possibility of significant specification changes in the future**
+
+```csharp
+var noteReceived = new Action<MisskeyNoteReceivedEventArgs>(e =>
+{
+    var note = e.NoteMessage.Body.Body;
+    if (note == null)
+        return;
+
+    var rn = note.Renote != null;
+    if (rn)
+        note = note.Renote;
+
+    Console.WriteLine("R {0}: (@{1}) {2}", rn ? "RENOTE" : "NORMAL", note?.User?.Username, note?.Text);
+});
+
+misskey.Streaming.NoteReceived += (sender, e) => noteReceived(e);
+
+var st = misskey.Streaming.Connect(MisskeyStreamingChannels.HybridTimeline);
+                
+Console.ReadLine();
+misskey.Streaming.Disconnect(st);
+```
+</details>
 
 
 ## Install
