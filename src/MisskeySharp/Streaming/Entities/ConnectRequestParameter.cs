@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace MisskeySharp.Streaming.Entities
 {
@@ -21,6 +22,7 @@ namespace MisskeySharp.Streaming.Entities
 
         public class BodyObject
         {
+            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
             public string Channel
             {
                 get;

@@ -85,7 +85,7 @@ namespace MisskeySharp.Streaming
         }
 
 
-        public void Connect(MisskeyStreamingChannels channels)
+        public MisskeyStreamingConnection Connect(MisskeyStreamingChannels channels)
         {
             this._checkDisposed();
             var wsUri = this._getConnectionUri();
@@ -100,19 +100,30 @@ namespace MisskeySharp.Streaming
                 Body = new ConnectRequestParameter.BodyObject()
                 {
                     Channel = channelName,
-                    channelId,
+                    Id = channelId,
                 }
             }));
 
-            //while (true)
-            //{
-            //    Thread.Sleep(500);
-            //    Console.WriteLine("Running: " + this._webSocketClient.IsReceiveProcRunning);
-            //}
+            return new MisskeyStreamingConnection()
+            {
+                Id = channelId,
+            };
         }
 
+        public void Disconnect(MisskeyStreamingConnection connection)
+        {
+            this._checkDisposed();
+            this._webSocketClient.Send(this._serialize(new ConnectRequestParameter()
+            {
+                Type = "disconnect",
+                Body = new ConnectRequestParameter.BodyObject()
+                {
+                    Id = connection.Id,
+                }
+            }));
 
-
+            this._webSocketClient.Close();
+        }
 
 
         public void Dispose()

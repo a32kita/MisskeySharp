@@ -57,16 +57,24 @@ namespace MisskeySharp.Streaming.Internal
 
             this._receivingThread = new Thread(new ThreadStart(this._receivingProcess.Worker));
             this._receivingThread.Start();
+
+            // 開始時の接続前にメッセージが送信される問題を防ぐ (強引)
+            Thread.Sleep(500);
         }
 
         public void Send(string data)
         {
-            if (this._receivingProcess != null && this._receivingProcess.IsReceivingNow || this._clientWebSocket.State != WebSocketState.Open)
+            if (this._receivingProcess != null && this._receivingProcess.IsReceivingNow)
             {
-                while (this._receivingProcess.IsReceivingNow || this._clientWebSocket.State != WebSocketState.Open)
+                while (this._receivingProcess.IsReceivingNow)
                 {
                     Thread.Sleep(1);
                 }
+            }
+
+            while (this._clientWebSocket.State != WebSocketState.Open)
+            {
+                Thread.Sleep(1);
             }
 
             Task.Run(async () => await this._clientWebSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(data)), WebSocketMessageType.Text, true, CancellationToken.None)).Wait();
@@ -74,8 +82,11 @@ namespace MisskeySharp.Streaming.Internal
 
         public void Close()
         {
-            if (this._receivingThread != null)
-                this._receivingThread.Abort();
+            //if (this._receivingThread != null)
+            //    this._receivingThread.Abort();
+            this._connectionCancellationTokenSource.Cancel();
+            Thread.Sleep(100);
+            Task.Run(async () => await this._clientWebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Close", CancellationToken.None)).Wait();
         }
 
 
@@ -134,15 +145,17 @@ namespace MisskeySharp.Streaming.Internal
 
                 while (true)
                 {
-                    //Console.WriteLine("Connection: Waiting ...");
                     var segment = new ArraySegment<byte>(buffer);
                     var result = Task.Run(async () => await this.ClientWebSocket.ReceiveAsync(segment, CancellationToken.None)).Result;
                     if (result.MessageType == WebSocketMessageType.Close)
                     {
-                        Task.Run(async () => await this.ClientWebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "OK", CancellationToken.None)).Wait();
-                        //Console.WriteLine("Connection: Closed");
-                        this._connectionClosed();
+                        try
+                        {
+                            Task.Run(async () => await this.ClientWebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "OK", CancellationToken.None)).Wait();
+                        }
+                        catch { }
 
+                        this._connectionClosed();
                         return;
                     }
 
@@ -155,7 +168,6 @@ namespace MisskeySharp.Streaming.Internal
                         {
                             Task.Run(async () => await this.ClientWebSocket.CloseAsync(
                                 WebSocketCloseStatus.InvalidPayloadData, "Payload is too long", CancellationToken.None)).Wait();
-                            //Console.WriteLine("Connection: Closed (Payload is too long)");
                             this._connectionClosed();
                             return;
                         }
@@ -164,7 +176,6 @@ namespace MisskeySharp.Streaming.Internal
                         result = Task.Run(async () => await this.ClientWebSocket.ReceiveAsync(segment, CancellationToken.None)).Result;
 
                         byteCount += result.Count;
-                        //Console.WriteLine("Connection: Receiving {0} bytes", byteCount);
                     }
 
                     var data = Encoding.UTF8.GetString(buffer, 0, byteCount);

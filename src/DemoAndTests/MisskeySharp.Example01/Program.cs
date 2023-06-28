@@ -1,4 +1,5 @@
 ﻿using MisskeySharp.Entities;
+using MisskeySharp.Streaming;
 using System.Collections.Specialized;
 using System.Net;
 
@@ -322,10 +323,27 @@ namespace MisskeySharp.Example01
             Console.WriteLine("ストリーミング");
             try
             {
-                misskey.Streaming.NoteReceived += (sender, e) => Console.WriteLine("R: {0}", e.NoteMessage?.Body?.Body?.Text);
+                var noteReceived = new Action<MisskeyNoteReceivedEventArgs>(e =>
+                {
+                    var note = e.NoteMessage.Body.Body;
+                    if (note == null)
+                        return;
+
+                    var rn = note.Renote != null;
+                    if (rn)
+                        note = note.Renote;
+
+                    Console.WriteLine("R {0}: (@{1}) {2}", rn ? "REN" : "NML", note?.User?.Username, note?.Text);
+                });
+
+                misskey.Streaming.NoteReceived += (sender, e) => noteReceived(e);
                 misskey.Streaming.ConnectionClosed += (sender, e) => Console.WriteLine("Streaming connection: closed.");
-                misskey.Streaming.Connect(Streaming.MisskeyStreamingChannels.HybridTimeline);
+                
+                var st = misskey.Streaming.Connect(Streaming.MisskeyStreamingChannels.HybridTimeline);
+                
                 Console.ReadLine();
+
+                misskey.Streaming.Disconnect(st);
             }
             catch (Exception ex)
             {

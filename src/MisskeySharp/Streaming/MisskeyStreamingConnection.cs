@@ -6,7 +6,7 @@ namespace MisskeySharp.Streaming
 {
     public class MisskeyStreamingConnection
     {
-        string Id
+        public string Id
         {
             get;
             set;
