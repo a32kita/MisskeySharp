@@ -17,11 +17,41 @@ namespace MisskeySharp.Streaming
         private bool _isDisposed;
 
 
+        public event EventHandler<MisskeyNoteReceivedEventArgs> NoteReceived;
+
+        public event EventHandler ConnectionClosed;
+
+
         internal MisskeyStreamingClient(MisskeyService parent)
         {
             this._parent = parent;
             this._webSocketClient = new WebSocketClient(); ;
             this._isDisposed = false;
+
+            this._webSocketClient.Received += (sender, e) =>
+            {
+                var json = e.Data;
+                if (String.IsNullOrEmpty(json))
+                {
+                    // 良くないけど無視する
+                    return;
+                }
+
+                NoteMessage noteMessage = null;
+                try
+                {
+                    noteMessage = this._deserialize<NoteMessage>(json);
+                }
+                catch (Exception ex)
+                {
+                    throw new MisskeyException("Failed to parse the JSON data received in the streaming.", ex);
+                }
+
+                this.NoteReceived?.Invoke(this, new MisskeyNoteReceivedEventArgs()
+                {
+                    NoteMessage = noteMessage,
+                });
+            };
         }
 
 
@@ -60,27 +90,28 @@ namespace MisskeySharp.Streaming
             this._checkDisposed();
             var wsUri = this._getConnectionUri();
 
-            this._webSocketClient.Received += (sender, e) =>
-            {
-                Console.WriteLine(e.Data);
-            };
+            var channelName = channels.ToString().ToLower()[0] + channels.ToString().Substring(1);
+            var channelId = Guid.NewGuid().ToString();
+
             this._webSocketClient.Open(wsUri);
             this._webSocketClient.Send(this._serialize(new ConnectRequestParameter()
             {
                 Type = "connect",
                 Body = new ConnectRequestParameter.BodyObject()
                 {
-                    Channel = channels.ToString().ToLower(),
-                    Id = Guid.NewGuid().ToString(),
+                    Channel = channelName,
+                    channelId,
                 }
             }));
 
-            while (true)
-            {
-                Thread.Sleep(500);
-                Console.WriteLine("Running: " + this._webSocketClient.IsReceiveProcRunning);
-            }
+            //while (true)
+            //{
+            //    Thread.Sleep(500);
+            //    Console.WriteLine("Running: " + this._webSocketClient.IsReceiveProcRunning);
+            //}
         }
+
+
 
 
 

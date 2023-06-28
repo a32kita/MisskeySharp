@@ -12,6 +12,7 @@ namespace MisskeySharp.Streaming.Internal
         private ClientWebSocket _clientWebSocket;
         private CancellationTokenSource _connectionCancellationTokenSource;
         private event EventHandler<WebSocketReceivedEventArgs> _received;
+        private event EventHandler _connectionClosed;
 
         private ReceivingProcess _receivingProcess;
         private Thread _receivingThread;
@@ -25,6 +26,12 @@ namespace MisskeySharp.Streaming.Internal
         {
             add => this._received += value;
             remove => this._received -= value;
+        }
+
+        public event EventHandler ConnectionClosed
+        {
+            add => this._connectionClosed += value;
+            remove => this._connectionClosed -= value;
         }
 
 
@@ -45,7 +52,8 @@ namespace MisskeySharp.Streaming.Internal
                 this._clientWebSocket, 
                 uri, 
                 this._connectionCancellationTokenSource.Token,
-                data => this._received?.Invoke(this, new WebSocketReceivedEventArgs(data)));
+                data => this._received?.Invoke(this, new WebSocketReceivedEventArgs(data)),
+                () => this._connectionClosed?.Invoke(this, new EventArgs()));
 
             this._receivingThread = new Thread(new ThreadStart(this._receivingProcess.Worker));
             this._receivingThread.Start();
@@ -53,9 +61,9 @@ namespace MisskeySharp.Streaming.Internal
 
         public void Send(string data)
         {
-            if (this._receivingProcess != null && this._receivingProcess.IsReceivingNow)
+            if (this._receivingProcess != null && this._receivingProcess.IsReceivingNow || this._clientWebSocket.State != WebSocketState.Open)
             {
-                while (this._receivingProcess.IsReceivingNow)
+                while (this._receivingProcess.IsReceivingNow || this._clientWebSocket.State != WebSocketState.Open)
                 {
                     Thread.Sleep(1);
                 }
@@ -80,6 +88,7 @@ namespace MisskeySharp.Streaming.Internal
         private class ReceivingProcess
         {
             private Action<string> _received;
+            private Action _connectionClosed;
 
 
             public ClientWebSocket ClientWebSocket
@@ -106,9 +115,10 @@ namespace MisskeySharp.Streaming.Internal
                 private set;
             }
 
-            public ReceivingProcess(ClientWebSocket clientWebSocket, Uri connectionUri, CancellationToken cancellationToken, Action<string> received)
+            public ReceivingProcess(ClientWebSocket clientWebSocket, Uri connectionUri, CancellationToken cancellationToken, Action<string> received, Action connectionClosed)
             {
                 this._received = received;
+                this._connectionClosed = connectionClosed;
 
                 this.ClientWebSocket = clientWebSocket;
                 this.ConnectionUri = connectionUri;
@@ -120,17 +130,19 @@ namespace MisskeySharp.Streaming.Internal
             public void Worker()
             {
                 this.ClientWebSocket.ConnectAsync(this.ConnectionUri, this.ConnectionCancellationToken).Wait();
-                var buffer = new byte[1024];
+                var buffer = new byte[1024 * 16];
 
                 while (true)
                 {
-                    Console.WriteLine("Connection: Waiting ...");
+                    //Console.WriteLine("Connection: Waiting ...");
                     var segment = new ArraySegment<byte>(buffer);
                     var result = Task.Run(async () => await this.ClientWebSocket.ReceiveAsync(segment, CancellationToken.None)).Result;
                     if (result.MessageType == WebSocketMessageType.Close)
                     {
                         Task.Run(async () => await this.ClientWebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "OK", CancellationToken.None)).Wait();
-                        Console.WriteLine("Connection: Closed");
+                        //Console.WriteLine("Connection: Closed");
+                        this._connectionClosed();
+
                         return;
                     }
 
@@ -143,6 +155,8 @@ namespace MisskeySharp.Streaming.Internal
                         {
                             Task.Run(async () => await this.ClientWebSocket.CloseAsync(
                                 WebSocketCloseStatus.InvalidPayloadData, "Payload is too long", CancellationToken.None)).Wait();
+                            //Console.WriteLine("Connection: Closed (Payload is too long)");
+                            this._connectionClosed();
                             return;
                         }
 
@@ -150,11 +164,11 @@ namespace MisskeySharp.Streaming.Internal
                         result = Task.Run(async () => await this.ClientWebSocket.ReceiveAsync(segment, CancellationToken.None)).Result;
 
                         byteCount += result.Count;
-                        Console.WriteLine("Connection: Receiving {0} bytes", byteCount);
+                        //Console.WriteLine("Connection: Receiving {0} bytes", byteCount);
                     }
 
-                    var json = Encoding.UTF8.GetString(buffer, 0, byteCount);
-                    this._received(json);
+                    var data = Encoding.UTF8.GetString(buffer, 0, byteCount);
+                    this._received(data);
 
                     this.IsReceivingNow = false;
                 }

@@ -52,13 +52,17 @@ namespace MisskeySharp.StreamingCT
                 }).Wait();
             }
 
-            var conReq = @"{
-	'type': 'connect',
-	'body': {
-		'channel': 'globalTimeline',
-		'id': 'channelId'
-	}
-}".Replace("channelId", Guid.NewGuid().ToString());
+            var conReq = s_serialize(new ConnectionRequest()
+            {
+                Type = "connect",
+                Body = new ConnectionRequest.BodyObject()
+                {
+                    Channel = "localTimeline",
+                    Id = Guid.NewGuid().ToString(),
+                }
+            });
+
+            //conReq = "test";
 
             sock.Send(conReq);
             Console.WriteLine(conReq);
@@ -73,6 +77,14 @@ namespace MisskeySharp.StreamingCT
 
 
             }
+        }
+
+        private static string s_serialize<T>(T obj)
+        {
+            return JsonSerializer.Serialize(obj, new JsonSerializerOptions()
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
         }
     }
 }
