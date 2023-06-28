@@ -271,6 +271,11 @@ namespace MisskeySharp
         public void Dispose()
         {
             this._checkDisposed();
+
+            this._httpClient.Dispose();
+            this.Streaming.Dispose();
+
+            this._disposed = true;
         }
     }
 }
