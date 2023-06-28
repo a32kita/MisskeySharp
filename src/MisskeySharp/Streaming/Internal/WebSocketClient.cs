@@ -82,8 +82,12 @@ namespace MisskeySharp.Streaming.Internal
 
         public void Close()
         {
-            //if (this._receivingThread != null)
-            //    this._receivingThread.Abort();
+            if (this._receivingThread != null)
+            {
+                //this._receivingThread.Abort();
+                this._receivingProcess.Cancel();
+            }
+
             this._connectionCancellationTokenSource.Cancel();
             Thread.Sleep(100);
             Task.Run(async () => await this._clientWebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Close", CancellationToken.None)).Wait();
@@ -100,6 +104,8 @@ namespace MisskeySharp.Streaming.Internal
         {
             private Action<string> _received;
             private Action _connectionClosed;
+
+            private bool _cancel;
 
 
             public ClientWebSocket ClientWebSocket
@@ -131,10 +137,17 @@ namespace MisskeySharp.Streaming.Internal
                 this._received = received;
                 this._connectionClosed = connectionClosed;
 
+                this._cancel = false;
+
                 this.ClientWebSocket = clientWebSocket;
                 this.ConnectionUri = connectionUri;
                 this.ConnectionCancellationToken = cancellationToken;
                 this.IsReceivingNow = false;
+            }
+
+            public void Cancel()
+            {
+                this._cancel = true;
             }
 
 
@@ -147,7 +160,7 @@ namespace MisskeySharp.Streaming.Internal
                 {
                     var segment = new ArraySegment<byte>(buffer);
                     var result = Task.Run(async () => await this.ClientWebSocket.ReceiveAsync(segment, CancellationToken.None)).Result;
-                    if (result.MessageType == WebSocketMessageType.Close)
+                    if (result.MessageType == WebSocketMessageType.Close || this._cancel)
                     {
                         try
                         {
@@ -168,6 +181,14 @@ namespace MisskeySharp.Streaming.Internal
                         {
                             Task.Run(async () => await this.ClientWebSocket.CloseAsync(
                                 WebSocketCloseStatus.InvalidPayloadData, "Payload is too long", CancellationToken.None)).Wait();
+                            this._connectionClosed();
+                            return;
+                        }
+
+                        if (this._cancel)
+                        {
+                            Task.Run(async () => await this.ClientWebSocket.CloseAsync(
+                                WebSocketCloseStatus.InvalidPayloadData, "Operation cancelled", CancellationToken.None)).Wait();
                             this._connectionClosed();
                             return;
                         }
