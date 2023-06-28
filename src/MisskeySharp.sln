@@ -11,26 +11,35 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MisskeySharp.Example01", "D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MisskeySharp.StreamingCT", "DemoAndTests\MisskeySharp.StreamingCT\MisskeySharp.StreamingCT.csproj", "{8A0956A3-D6FC-416B-AD10-D2450C7A6EF7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MisskeySharp.StreamingCT2", "DemoAndTests\MisskeySharp.StreamingCT2\MisskeySharp.StreamingCT2.csproj", "{9E4B1B8B-F1D0-4132-9157-C05CA10DAF9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MisskeySharp.StreamingCT2", "DemoAndTests\MisskeySharp.StreamingCT2\MisskeySharp.StreamingCT2.csproj", "{9E4B1B8B-F1D0-4132-9157-C05CA10DAF9A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Beta|Any CPU = Beta|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EB7775A2-EA32-45BD-9720-0D365EC314D2}.Beta|Any CPU.ActiveCfg = Beta|Any CPU
+		{EB7775A2-EA32-45BD-9720-0D365EC314D2}.Beta|Any CPU.Build.0 = Beta|Any CPU
 		{EB7775A2-EA32-45BD-9720-0D365EC314D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EB7775A2-EA32-45BD-9720-0D365EC314D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB7775A2-EA32-45BD-9720-0D365EC314D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB7775A2-EA32-45BD-9720-0D365EC314D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{660B6A7D-7E7F-42B4-8EB0-285DFE8A3ED9}.Beta|Any CPU.ActiveCfg = Beta|Any CPU
+		{660B6A7D-7E7F-42B4-8EB0-285DFE8A3ED9}.Beta|Any CPU.Build.0 = Beta|Any CPU
 		{660B6A7D-7E7F-42B4-8EB0-285DFE8A3ED9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{660B6A7D-7E7F-42B4-8EB0-285DFE8A3ED9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{660B6A7D-7E7F-42B4-8EB0-285DFE8A3ED9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{660B6A7D-7E7F-42B4-8EB0-285DFE8A3ED9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A0956A3-D6FC-416B-AD10-D2450C7A6EF7}.Beta|Any CPU.ActiveCfg = Beta|Any CPU
+		{8A0956A3-D6FC-416B-AD10-D2450C7A6EF7}.Beta|Any CPU.Build.0 = Beta|Any CPU
 		{8A0956A3-D6FC-416B-AD10-D2450C7A6EF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8A0956A3-D6FC-416B-AD10-D2450C7A6EF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A0956A3-D6FC-416B-AD10-D2450C7A6EF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A0956A3-D6FC-416B-AD10-D2450C7A6EF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E4B1B8B-F1D0-4132-9157-C05CA10DAF9A}.Beta|Any CPU.ActiveCfg = Beta|Any CPU
+		{9E4B1B8B-F1D0-4132-9157-C05CA10DAF9A}.Beta|Any CPU.Build.0 = Beta|Any CPU
 		{9E4B1B8B-F1D0-4132-9157-C05CA10DAF9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9E4B1B8B-F1D0-4132-9157-C05CA10DAF9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E4B1B8B-F1D0-4132-9157-C05CA10DAF9A}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -16,9 +16,13 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Title>$(AssemblyName)</Title>
     <PackageIcon>PackageIcon.png</PackageIcon>
+    <Configurations>Debug;Release;Beta</Configurations>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
 	<Version>$([System.DateTime]::Now.ToString('0.yy.M.dHH'))-alpha-$([System.DateTime]::Now.ToString('mmss'))$([System.Guid]::NewGuid.ToString().Replace("-", "").Substring(0, 5))</Version>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Beta'">
+    <Version>$([System.DateTime]::Now.ToString('0.yy.M.dHH'))-beta-$([System.DateTime]::Now.ToString('mmss'))$([System.Guid]::NewGuid.ToString().Replace("-", "").Substring(0, 5))</Version>
   </PropertyGroup>
 
   <ItemGroup>
