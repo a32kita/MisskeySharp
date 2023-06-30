@@ -6,7 +6,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using MisskeySharp.Streaming.Entities;
-using MisskeySharp.Streaming.Internal;
+using MisskeySharp.Streaming.Internal2;
 
 namespace MisskeySharp.Streaming
 {
@@ -25,7 +25,7 @@ namespace MisskeySharp.Streaming
         internal MisskeyStreamingClient(MisskeyService parent)
         {
             this._parent = parent;
-            this._webSocketClient = new WebSocketClient(); ;
+            this._webSocketClient = new WebSocketClient(Encoding.UTF8);
             this._isDisposed = false;
 
             this._webSocketClient.Received += (sender, e) =>
@@ -52,6 +52,8 @@ namespace MisskeySharp.Streaming
                     NoteMessage = noteMessage,
                 });
             };
+
+            this._webSocketClient.ConnectionClosed += (sender, e) => this.ConnectionClosed?.Invoke(this, e);
         }
 
 
@@ -94,15 +96,22 @@ namespace MisskeySharp.Streaming
             var channelId = Guid.NewGuid().ToString();
 
             this._webSocketClient.Open(wsUri);
-            this._webSocketClient.Send(this._serialize(new ConnectRequestParameter()
+            if (this._webSocketClient.WaitForConnectedAsync(1000 * 10).Result)
             {
-                Type = "connect",
-                Body = new ConnectRequestParameter.BodyObject()
+                this._webSocketClient.Send(this._serialize(new ConnectRequestParameter()
                 {
-                    Channel = channelName,
-                    Id = channelId,
-                }
-            }));
+                    Type = "connect",
+                    Body = new ConnectRequestParameter.BodyObject()
+                    {
+                        Channel = channelName,
+                        Id = channelId,
+                    }
+                }));
+            }
+            else
+            {
+                throw new MissingFieldException("Failed to connect");
+            }
 
             return new MisskeyStreamingConnection()
             {
