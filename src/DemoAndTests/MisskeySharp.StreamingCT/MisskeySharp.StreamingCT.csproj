@@ -9,7 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\MisskeySharp\MisskeySharp.csproj" />
+    <PackageReference Include="System.Text.Json" Version="7.0.3" />
+    <PackageReference Include="WebSocket4Net" Version="0.15.2" />
   </ItemGroup>
 
 </Project>

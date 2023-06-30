@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 using MisskeySharp.ClientEndpoints;
 using MisskeySharp.Entities;
+using MisskeySharp.Streaming;
 
 namespace MisskeySharp
 {
@@ -62,6 +63,12 @@ namespace MisskeySharp
             private set;
         }
 
+        public MisskeyStreamingClient Streaming
+        {
+            get;
+            private set;
+        }
+
 
         public MisskeyService(string host)
         {
@@ -76,6 +83,8 @@ namespace MisskeySharp
             this.Users = new Users(this);
             this.I = new I(this);
             this.Hashtags = new Hashtags(this);
+
+            this.Streaming = new MisskeyStreamingClient(this);
         }
 
 
@@ -198,6 +207,8 @@ namespace MisskeySharp
             using (var responseMessage = await this._httpClient.SendAsync(requestMessage))
             {
                 TResponse respObj = null;
+                if (respObj is VoidResponse)
+                    return new TResponse();
 
                 try
                 {
@@ -260,6 +271,11 @@ namespace MisskeySharp
         public void Dispose()
         {
             this._checkDisposed();
+
+            this._httpClient.Dispose();
+            this.Streaming.Dispose();
+
+            this._disposed = true;
         }
     }
 }
