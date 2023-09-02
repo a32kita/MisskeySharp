@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 
 using MisskeySharp.ClientEndpoints;
 using MisskeySharp.Entities;
+using MisskeySharp.InternalUtils;
 using MisskeySharp.Streaming;
 
 namespace MisskeySharp
@@ -69,6 +71,12 @@ namespace MisskeySharp
             private set;
         }
 
+        public Drive Drive
+        {
+            get;
+            private set;
+        }
+
         public MisskeyStreamingClient Streaming
         {
             get;
@@ -90,6 +98,7 @@ namespace MisskeySharp
             this.I = new I(this);
             this.Hashtags = new Hashtags(this);
             this.Following = new Following(this);
+            this.Drive = new Drive(this);
 
             this.Streaming = new MisskeyStreamingClient(this);
         }
@@ -219,7 +228,7 @@ namespace MisskeySharp
 
                 try
                 {
-#if true
+#if false
                     // 多分高速
                     var contentStream = await responseMessage.Content.ReadAsStreamAsync();
                     
@@ -273,6 +282,64 @@ namespace MisskeySharp
             }
 
             return resp;
+        }
+
+        public async Task<TApiResponse> PostFormDataAsync<TApiResponse>(string endpoint, IEnumerable<MultipartUploadContent> contents) where TApiResponse : MisskeyApiEntitiesBase, new()
+        {
+            var path = "/api/" + endpoint;
+
+            using (var multipart = new MultipartFormDataContent())
+            {
+                multipart.Add(new StringContent(this.AccessToken), "i");
+                var streams = new List<Stream>();
+                foreach (var content in contents)
+                {
+                    if (String.IsNullOrEmpty(content.StringContent) == false)
+                    {
+                        if (content.FileName == null)
+                            multipart.Add(new StringContent(content.StringContent), content.Name);
+                        else
+                            multipart.Add(new StringContent(content.StringContent), content.Name, content.FileName);
+                    }
+                    else if (content.ByteContent != null)
+                    {
+                        var stream = new MemoryStream(content.ByteContent);
+                        var streamContent = new StreamContent(stream);
+
+                        streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(content.ContentType);
+
+                        if (content.FileName == null)
+                            multipart.Add(streamContent, content.Name);
+                        else
+                            multipart.Add(streamContent, content.Name, content.FileName);
+
+                        streams.Add(stream);
+                    }
+                    else
+                    {
+                        // 文字列コンテンツでもバイト コンテンツでもない
+                        throw new Exception();
+                    }
+                }
+
+                using (var requestMessage = new HttpRequestMessage(HttpMethod.Post, this._getUri(path)))
+                {
+                    requestMessage.Content = multipart;
+                    var resp = await this.RawRequestAsync<TApiResponse>(requestMessage);
+
+                    if (resp.IsSuccess == false)
+                    {
+                        throw new MisskeyException(resp.Error);
+                    }
+
+                    foreach (var s in streams)
+                    {
+                        s?.Dispose();
+                    }
+
+                    return resp;
+                }
+            }
         }
 
         public void Dispose()
