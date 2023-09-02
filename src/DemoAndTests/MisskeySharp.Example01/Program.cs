@@ -228,7 +228,7 @@ namespace MisskeySharp.Example01
 #endif
 
             // 通知の取得
-#if false
+#if true
             Console.WriteLine("通知の取得");
             try
             {
@@ -240,7 +240,7 @@ namespace MisskeySharp.Example01
                 Console.WriteLine("通知の取得結果;");
                 foreach (var n in resp)
                 {
-                    Console.WriteLine(" {0}: {1} by @{2}", n.CreatedAt.ToString("MM/dd HH:mm:ss"), n.Type, n.User?.Username);
+                    Console.WriteLine(" {0}: {1} by @{2} ({3})", n.CreatedAt.ToString("MM/dd HH:mm:ss"), n.Type, n.User?.Username, n.Reaction);
                 }
             }
             catch (Exception ex)
@@ -395,7 +395,7 @@ namespace MisskeySharp.Example01
             }
 #endif
 
-#if true
+#if false
             Console.WriteLine("ファイルアップロード");
             try
             {
