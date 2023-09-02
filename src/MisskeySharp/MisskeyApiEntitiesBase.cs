@@ -28,7 +28,7 @@ namespace MisskeySharp
             get => this.HttpStatusCode / 100 == 2 && this.Error == null;
         }
 
-        [JsonIgnore]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public MisskeyApiError Error
         {
             get;

@@ -102,7 +102,7 @@ namespace MisskeySharp.Example01
 #endif
 
             // デモ検索
-#if false
+#if true
             var demoKeyword = "#a32kita_debug_notes";
             Console.WriteLine("次のキーワードでノートを検索します: {0}", demoKeyword);
             //Console.WriteLine("[Enter] キーを押下して続行します ...");
@@ -130,7 +130,7 @@ namespace MisskeySharp.Example01
 #endif
 
             // フォロワー取得
-#if false
+#if true
             Console.WriteLine("フォローを取得します。");
             //Console.WriteLine("[Enter] キーを押下して続行します ...");
             //Console.ReadLine();
@@ -156,7 +156,7 @@ namespace MisskeySharp.Example01
 #endif
 
             // ユーザーのノートの取得
-#if false
+#if true
             Console.WriteLine("ユーザーのノートの取得");
             //Console.WriteLine("[Enter] キーを押下して続行します ...");
             //Console.ReadLine();
@@ -170,7 +170,7 @@ namespace MisskeySharp.Example01
                 Console.WriteLine("ユーザーノート取得結果;");
                 foreach (var note in resp)
                 {
-                    Console.WriteLine(" {0} | {1}", note.User.Username.PadRight(10), note.Text.Replace("\n", " "));
+                    Console.WriteLine(" {0} | {1}", note.User.Username.PadRight(10), note.Text?.Replace("\n", " "));
                 }
             }
             catch (Exception ex)
@@ -204,8 +204,9 @@ namespace MisskeySharp.Example01
 #endif
 
             // 他人のユーザー情報の取得
-#if false
+#if true
             Console.WriteLine("他のユーザーの情報の取得");
+            var utataneBotUserId = String.Empty;
             try
             {
                 var resp = await misskey.Users.Show(new UsersShowParameter()
@@ -215,6 +216,8 @@ namespace MisskeySharp.Example01
 
                 Console.WriteLine("ユーザー情報の取得結果;");
                 Console.WriteLine(" {0} (@{1}) / {2}", resp.Name, resp.Username, resp.Id);
+
+                utataneBotUserId = resp.Id;
             }
             catch (Exception ex)
             {
@@ -224,7 +227,7 @@ namespace MisskeySharp.Example01
 #endif
 
             // 通知の取得
-#if false
+#if true
             Console.WriteLine("通知の取得");
             try
             {
@@ -319,6 +322,7 @@ namespace MisskeySharp.Example01
             }
 #endif
 
+#if false
             // ストリーミング
             Console.WriteLine("ストリーミング");
             try
@@ -350,6 +354,26 @@ namespace MisskeySharp.Example01
                 Console.WriteLine($"Error: {ex.GetType().Name}");
                 Console.WriteLine($"       {ex.Message}");
             }
+#endif
+
+#if true
+            Console.WriteLine("フォロー");
+            try
+            {
+                var resp = await misskey.Following.Create(new FollowRequestParameter()
+                {
+                    UserId = utataneBotUserId,
+                });
+
+                Console.WriteLine("ユーザー情報の取得結果;");
+                Console.WriteLine(" {0} (@{1}) / {2}", resp?.Name, resp?.Username, resp?.Id);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.GetType().Name}");
+                Console.WriteLine($"       {ex.Message}");
+            }
+#endif
 
 
             // デモ終わり

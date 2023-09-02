@@ -63,6 +63,12 @@ namespace MisskeySharp
             private set;
         }
 
+        public Following Following
+        {
+            get;
+            private set;
+        }
+
         public MisskeyStreamingClient Streaming
         {
             get;
@@ -83,6 +89,7 @@ namespace MisskeySharp
             this.Users = new Users(this);
             this.I = new I(this);
             this.Hashtags = new Hashtags(this);
+            this.Following = new Following(this);
 
             this.Streaming = new MisskeyStreamingClient(this);
         }

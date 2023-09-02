@@ -33,7 +33,7 @@ namespace MisskeySharp.Streaming
                 var json = e.Data;
                 if (String.IsNullOrEmpty(json))
                 {
-                    // 良くないけど無視する
+                    // 受信失敗？ → 無視
                     return;
                 }
 
