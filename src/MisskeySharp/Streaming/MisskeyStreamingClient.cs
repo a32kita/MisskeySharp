@@ -132,7 +132,9 @@ namespace MisskeySharp.Streaming
             var channelName = channels.ToString().ToLower()[0] + channels.ToString().Substring(1);
             var channelId = Guid.NewGuid().ToString();
 
-            this._webSocketClient.Open(wsUri);
+            if (this._webSocketClient.State != WebSocketClientState.Connected && this._webSocketClient.State != WebSocketClientState.Connecting)
+                this._webSocketClient.Open(wsUri);
+
             if (this._webSocketClient.WaitForConnectedAsync(1000 * 10).Result)
             {
                 this._webSocketClient.Send(this._serialize(new ConnectRequestParameter()
@@ -168,7 +170,8 @@ namespace MisskeySharp.Streaming
                 }
             }));
 
-            this._webSocketClient.Close();
+            // まだ別のチャンネルへの接続が残っている可能性があるため
+            //this._webSocketClient.Close();
         }
 
 

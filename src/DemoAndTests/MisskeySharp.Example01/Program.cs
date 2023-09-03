@@ -354,12 +354,12 @@ namespace MisskeySharp.Example01
                 misskey.Streaming.NotificationReceived += (sender, e) => notificationReceived(e);
                 misskey.Streaming.ConnectionClosed += (sender, e) => Console.WriteLine("Streaming connection: closed.");
                 
-                //var ltCn = misskey.Streaming.Connect(MisskeyStreamingChannels.LocalTimeline);
+                var ltCn = misskey.Streaming.Connect(MisskeyStreamingChannels.LocalTimeline);
                 var miCn = misskey.Streaming.Connect(MisskeyStreamingChannels.Main);
                 
                 Console.ReadLine();
 
-                //misskey.Streaming.Disconnect(ltCn);
+                misskey.Streaming.Disconnect(ltCn);
                 misskey.Streaming.Disconnect(miCn);
             }
             catch (Exception ex)
