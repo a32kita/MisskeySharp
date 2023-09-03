@@ -228,7 +228,7 @@ namespace MisskeySharp.Example01
 #endif
 
             // 通知の取得
-#if true
+#if false
             Console.WriteLine("通知の取得");
             try
             {
@@ -323,7 +323,7 @@ namespace MisskeySharp.Example01
             }
 #endif
 
-#if false
+#if true
             // ストリーミング
             Console.WriteLine("ストリーミング");
             try
@@ -341,14 +341,26 @@ namespace MisskeySharp.Example01
                     Console.WriteLine("R {0}: (@{1}) {2}", rn ? "RENOTE" : "NORMAL", note?.User?.Username, note?.Text);
                 });
 
+                var notificationReceived = new Action<MisskeyNotificationReceivedEventArgs>(e =>
+                {
+                    var notification = e.NotificationMessage.Body.Body;
+                    if (notification == null)
+                        return;
+
+                    Console.WriteLine("N {0}: (@{1})", notification.Type, notification.User?.Username);
+                });
+
                 misskey.Streaming.NoteReceived += (sender, e) => noteReceived(e);
+                misskey.Streaming.NotificationReceived += (sender, e) => notificationReceived(e);
                 misskey.Streaming.ConnectionClosed += (sender, e) => Console.WriteLine("Streaming connection: closed.");
                 
-                var st = misskey.Streaming.Connect(MisskeyStreamingChannels.HybridTimeline);
+                //var ltCn = misskey.Streaming.Connect(MisskeyStreamingChannels.LocalTimeline);
+                var miCn = misskey.Streaming.Connect(MisskeyStreamingChannels.Main);
                 
                 Console.ReadLine();
 
-                misskey.Streaming.Disconnect(st);
+                //misskey.Streaming.Disconnect(ltCn);
+                misskey.Streaming.Disconnect(miCn);
             }
             catch (Exception ex)
             {

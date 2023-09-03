@@ -19,6 +19,8 @@ namespace MisskeySharp.Streaming
 
         public event EventHandler<MisskeyNoteReceivedEventArgs> NoteReceived;
 
+        public event EventHandler<MisskeyNotificationReceivedEventArgs> NotificationReceived;
+
         public event EventHandler ConnectionClosed;
 
 
@@ -37,20 +39,55 @@ namespace MisskeySharp.Streaming
                     return;
                 }
 
-                NoteMessage noteMessage = null;
+                StreamingMessage<object> data = null;
                 try
                 {
-                    noteMessage = this._deserialize<NoteMessage>(json);
+                    data = this._deserialize<StreamingMessage<object>>(json);
                 }
-                catch (Exception ex)
+                catch
                 {
-                    throw new MisskeyException("Failed to parse the JSON data received in the streaming.", ex);
+                    // 受信失敗？ → 無視
+                    return;
                 }
 
-                this.NoteReceived?.Invoke(this, new MisskeyNoteReceivedEventArgs()
+                if (data.Body.Type == "note")
                 {
-                    NoteMessage = noteMessage,
-                });
+                    NoteMessage noteMessage = null;
+                    try
+                    {
+                        noteMessage = this._deserialize<NoteMessage>(json);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new MisskeyException("Failed to parse the JSON data received in the streaming.", ex);
+                    }
+
+                    this.NoteReceived?.Invoke(this, new MisskeyNoteReceivedEventArgs()
+                    {
+                        NoteMessage = noteMessage,
+                    });
+                }
+                else if (data.Body.Type == "notification")
+                {
+                    NotificationMessage notificationMessage = null;
+                    try
+                    {
+                        notificationMessage = this._deserialize<NotificationMessage>(json);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new MisskeyException("Failed to parse the JSON data received in the streaming.", ex);
+                    }
+
+                    this.NotificationReceived?.Invoke(this, new MisskeyNotificationReceivedEventArgs()
+                    {
+                        NotificationMessage = notificationMessage,
+                    });
+                }
+                else
+                {
+                    // NOP
+                }
             };
 
             this._webSocketClient.ConnectionClosed += (sender, e) => this.ConnectionClosed?.Invoke(this, e);
