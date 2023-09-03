@@ -2,6 +2,7 @@
 using MisskeySharp.Streaming;
 using System.Collections.Specialized;
 using System.Net;
+using System.Text;
 
 namespace MisskeySharp.Example01
 {
@@ -170,7 +171,7 @@ namespace MisskeySharp.Example01
                 Console.WriteLine("ユーザーノート取得結果;");
                 foreach (var note in resp)
                 {
-                    Console.WriteLine(" {0} | {1}", note.User.Username.PadRight(10), note.Text.Replace("\n", " "));
+                    Console.WriteLine(" {0} | {1}", note.User.Username.PadRight(10), note.Text?.Replace("\n", " "));
                 }
             }
             catch (Exception ex)
@@ -206,6 +207,7 @@ namespace MisskeySharp.Example01
             // 他人のユーザー情報の取得
 #if false
             Console.WriteLine("他のユーザーの情報の取得");
+            var utataneBotUserId = String.Empty;
             try
             {
                 var resp = await misskey.Users.Show(new UsersShowParameter()
@@ -215,6 +217,8 @@ namespace MisskeySharp.Example01
 
                 Console.WriteLine("ユーザー情報の取得結果;");
                 Console.WriteLine(" {0} (@{1}) / {2}", resp.Name, resp.Username, resp.Id);
+
+                utataneBotUserId = resp.Id;
             }
             catch (Exception ex)
             {
@@ -236,7 +240,7 @@ namespace MisskeySharp.Example01
                 Console.WriteLine("通知の取得結果;");
                 foreach (var n in resp)
                 {
-                    Console.WriteLine(" {0}: {1} by @{2}", n.CreatedAt.ToString("MM/dd HH:mm:ss"), n.Type, n.User?.Username);
+                    Console.WriteLine(" {0}: {1} by @{2} ({3})", n.CreatedAt.ToString("MM/dd HH:mm:ss"), n.Type, n.User?.Username, n.Reaction);
                 }
             }
             catch (Exception ex)
@@ -319,6 +323,7 @@ namespace MisskeySharp.Example01
             }
 #endif
 
+#if true
             // ストリーミング
             Console.WriteLine("ストリーミング");
             try
@@ -336,20 +341,101 @@ namespace MisskeySharp.Example01
                     Console.WriteLine("R {0}: (@{1}) {2}", rn ? "RENOTE" : "NORMAL", note?.User?.Username, note?.Text);
                 });
 
+                var notificationReceived = new Action<MisskeyNotificationReceivedEventArgs>(e =>
+                {
+                    var notification = e.NotificationMessage.Body.Body;
+                    if (notification == null)
+                        return;
+
+                    Console.WriteLine("N {0}: (@{1})", notification.Type, notification.User?.Username);
+                });
+
                 misskey.Streaming.NoteReceived += (sender, e) => noteReceived(e);
+                misskey.Streaming.NotificationReceived += (sender, e) => notificationReceived(e);
                 misskey.Streaming.ConnectionClosed += (sender, e) => Console.WriteLine("Streaming connection: closed.");
                 
-                var st = misskey.Streaming.Connect(MisskeyStreamingChannels.HybridTimeline);
+                //var ltCn = misskey.Streaming.Connect(MisskeyStreamingChannels.LocalTimeline);
+                var miCn = misskey.Streaming.Connect(MisskeyStreamingChannels.Main);
                 
                 Console.ReadLine();
 
-                misskey.Streaming.Disconnect(st);
+                //misskey.Streaming.Disconnect(ltCn);
+                misskey.Streaming.Disconnect(miCn);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.GetType().Name}");
                 Console.WriteLine($"       {ex.Message}");
             }
+#endif
+
+#if false
+            Console.WriteLine("フォロー");
+            try
+            {
+                var resp = await misskey.Following.Create(new FollowRequestParameter()
+                {
+                    UserId = utataneBotUserId,
+                });
+
+                Console.WriteLine("ユーザー情報の取得結果;");
+                Console.WriteLine(" {0} (@{1}) / {2}", resp?.Name, resp?.Username, resp?.Id);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.GetType().Name}");
+                Console.WriteLine($"       {ex.Message}");
+            }
+#endif
+
+#if true
+            Console.WriteLine("ファイル一覧");
+            try
+            {
+                var resp = await misskey.Drive.Files.Get(new DriveFilesQuery() { });
+
+                Console.WriteLine("ファイル一覧の取得結果;");
+                foreach (var file in resp)
+                {
+                    Console.WriteLine(" {0} ({1})", file.Name, file.CreatedAt);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.GetType().Name}");
+                Console.WriteLine($"       {ex.Message}");
+            }
+#endif
+
+#if false
+            Console.WriteLine("ファイルアップロード");
+            try
+            {
+                var nowStr = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-test";
+                var resp = await misskey.Drive.Files.Create(new FileUploadRequest()
+                {
+                    ContentStream = new MemoryStream(Encoding.UTF8.GetBytes(nowStr)),
+                    FileName = nowStr + ".txt",
+                    ContentType = "text/plain",
+                });
+
+                Console.WriteLine("ファイルのアップロード結果;");
+                Console.WriteLine(" {0} ({1})", resp.Name, resp.CreatedAt);
+
+                // 投稿
+                var demoText = "(Debug) API リクエスト テスト\nこれは Misskey API のコール試験投稿です。\n" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff") + "\n\n#a32kita_debug_notes";
+                var resp2 = await misskey.Notes.Create(new Note()
+                {
+                    Text = demoText,
+                    FileIds = new List<string>() { resp.Id },
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.GetType().Name}");
+                Console.WriteLine($"       {ex.Message}");
+            }
+#endif
 
 
             // デモ終わり
